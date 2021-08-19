@@ -1,0 +1,21 @@
+Package: rsprite2
+Title: Identify distributions that match reported sample parameters (SPRITE)
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Lukas",
+           family = "Wallrich",
+           role = c("aut", "cre"),
+           email = "lukas.wallrich@gmail.com",
+           comment = c(ORCID = "0000-0003-2121-5177"))
+Description: This package creates possible distributions based on reported sample
+    parameters. For that, it uses the SPRITE algorithm proposed by Heathers 
+    et al. (2018). Much of the code for is based on Nick Brown's rSPRITE shiny app,
+    with some extensions.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
