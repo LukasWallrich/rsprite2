@@ -3,7 +3,7 @@
 #' The SPRITE algorithm aims to construct possible distributions that conform to
 #' observed/reported parameters. This function performs some checks and returns a list of these
 #' parameters that can then be passed to the functions that actually generate
-#' the distributions (e.g. \link{`find_possible_distribution()`})
+#' the distributions (e.g. \code{\link{find_possible_distribution}})
 #'
 #' Restrictions can be used to define how often a specific value should appear in the sample.
 #' They need to be passed as a list in the form `value = frequency`. Thus, to specify that
@@ -84,9 +84,9 @@ set_parameters <- function(mean, sd, n_obs, min_val, max_val,
 #'
 #' This function aims to find several possible distribution that would give rise to
 #' the observed sample parameters. For that, you need to pass a list of parameters,
-#' best created with \link{`set_parameters`}
+#' created with \code{\link{set_parameters}}
 #'
-#' @param parameters List of parameters, see \link{`set_parameters`}
+#' @param parameters List of parameters, see \code{\link{set_parameters}}
 #' @param n_distributions The target number of distributions to return.
 #' @param seed An integer to use as the seed for random number generation. Set this in scripts to ensure reproducibility.
 #' @param return_tibble Should a tibble, rather than a list, be returned? Requires the `tibble`-package, ignored if that package is not available.
@@ -177,9 +177,9 @@ find_possible_distributions <- function(parameters, n_distributions, seed = NULL
 #'
 #' This function aims to find a possible distribution that would give rise to
 #' the observed sample parameters. For that, you need to pass a list of parameters,
-#' best created with \link{`set_parameters`}
+#' best created with \code{\link{set_parameters}}
 #'
-#' @param parameters List of parameters, see \link{`set_parameters`}
+#' @param parameters List of parameters, see \code{\link{set_parameters}}
 #' @param seed An integer to use as the seed for random number generation. Set this in scripts to ensure reproducibility.
 #' @param values_only Should only values or a more informative list be returned. See details.
 #'
@@ -512,10 +512,10 @@ find_possible_distribution <- function(parameters, seed = NULL, values_only = FA
 #' given mean is not consistent, the closest consistent mean is returned with a
 #' warning.
 #'
-#'  @inheritParams set_parameters mean n_obs m_prec, n_items
-#'  @param return_values Should all means consistent with the given parameters be returned?
+#' @param return_values Should all means consistent with the given parameters be returned?
+#' @inheritParams set_parameters
 #'
-#' @return Either TRUE/FALSE, or all possible means (if TRUE)/closest consistent mean (if FALSE)
+#' @return Either TRUE/FALSE, or all possible means (if test passes)/closest consistent mean (if test fails)
 #'
 #' @references
 #' \insertRef{brown2017grim}{rsprite2}
