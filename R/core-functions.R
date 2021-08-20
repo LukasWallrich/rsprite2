@@ -7,7 +7,13 @@
 #'
 #' Restrictions can be used to define how often a specific value should appear in the sample.
 #' They need to be passed as a list in the form `value = frequency`. Thus, to specify that
-#' there should be no 3s and five 4s in the distribution, you would pass `restrictions = list(3 = 0, 4 = 5)`.
+#' there should be no 3s and five 4s in the distribution, you would pass
+#' `restrictions_exact = list("3" = 0, "4" = 5)`. To specify that there should be at least
+#' one 1 and one 7, you would pass `restrictions_minimum = list("1" = 1, "7" = 1)`. If you just want to
+#' specify that the minimum and maximum values appear at least once (for instance when they are the
+#' reported rather than possible range), you can use the shortcut `restrictions_minimum = "range"`. Finally,
+#' if you work with multi-item scales that result in decimal responses, round those names to two decimal points, e.g.,
+#' when `n_items = 3` you could specify `list("1.67" = 0)`.
 #'
 #' @param mean The mean of the distribution
 #' @param sd The standard deviation of the distribution
@@ -20,14 +26,16 @@
 #' reported standard deviation ends in 0.
 #' @param n_items Number of items in scale, if distribution represents scale averages.
 #' Defaults to 1, which represents any single-item measure.
-#' @param restrictions Restrictions on the frequency of specific responses, see Details)
+#' @param restrictions_exact Restrictions on the exact frequency of specific responses, see Details
+#' @param restrictions_minimum Restrictions on the minimum frequency of specific responses, see Details
 #'
-#' @return A named list of parameters.
+#' @return A named list of parameters, pre-processed for further rsprite2 functions.
 #' @export
 
 set_parameters <- function(mean, sd, n_obs, min_val, max_val,
                            m_prec = NULL, sd_prec = NULL,
-                           n_items = 1, restrictions = NULL) {
+                           n_items = 1, restrictions_exact = NULL,
+                           restrictions_minimum = NULL) {
   if (is.null(m_prec)) {
     m_prec <- max(nchar(sub("^[0-9]*", "", mean)) - 1, 0)
   }
@@ -63,11 +71,68 @@ set_parameters <- function(mean, sd, n_obs, min_val, max_val,
 
     if (!(mean >= min_val & mean <= max_val)) {
     stop("The mean is outside the possible range, which is impossible - please check inputs.")
+    }
+
+  if (restrictions_minimum == "range") {
+    restrictions_minimum <- list(1, 1)
+    names(restrictions_minimum) <- c(min_val, max_val)
   }
 
-  # TK: validate restrictions & find a way to enable restrictions for fractions (refactor poss values here!)
+  poss_values <- numeric()
+  for (i in seq_len(n_items)) {
+    poss_values <- c(poss_values, min_val:max_val + (1 / n_items) * (i - 1))
+  }
 
-  out <- .named_list(mean, sd, n_obs, min_val, max_val, m_prec, sd_prec, n_items, restrictions)
+  poss_values <- sort(poss_values[poss_values <= max_val])
+
+  poss_values_chr <- round(poss_values, 2)
+
+  fixed_responses <- numeric()
+  fixed_values <- NA
+
+
+  if(!is.null(restrictions_minimum)&!is.null(restrictions_exact)) {
+
+  if(any(duplicated(c(round(as.numeric(names(restrictions_exact)), 2), round(as.numeric(names(restrictions_minimum)), 2))))) {
+    duplicated <- c(round(as.numeric(names(restrictions_exact)), 2), round(as.numeric(names(restrictions_minimum)), 2))[duplicated(c(round(as.numeric(names(restrictions_exact)), 2), round(as.numeric(names(restrictions_minimum)), 2)))]
+    stop("Several restrictions for same value found. Ensure there is only one restriction (exact or minimum) for: ", duplicated)
+  }
+}
+  if(!is.null(restrictions_minimum)) {
+
+  if(any(!(round(as.numeric(names(restrictions_minimum)), 2) %in% poss_values_chr))) {
+    no_match <- names(restrictions_minimum)[!(round(as.numeric(names(restrictions_minimum)), 2) %in% poss_values_chr)]
+    stop("Invalid names in restrictions_minimum. The following could not be matched to possible response values: ", no_match)
+  }
+
+  #Ensure restrictions are ordered
+  restrictions_minimum <- restrictions_minimum[as.character(poss_values_chr[poss_values_chr %in% names(restrictions_minimum)])]
+
+  fixed_responses <- c(fixed_responses, rep(poss_values[poss_values_chr %in% names(restrictions_minimum)], unlist(restrictions_minimum)))
+
+  }
+
+  if(!is.null(restrictions_exact)) {
+
+
+    if(any(!(round(as.numeric(names(restrictions_exact)), 2) %in% poss_values_chr))) {
+      no_match <- names(restrictions_exact)[!(round(as.numeric(names(restrictions_exact)), 2) %in% poss_values_chr)]
+      stop("Invalid names in restrictions_exact. The following could not be matched to possible response values: ", no_match)
+    }
+
+
+    #Ensure restrictions are ordered
+    restrictions_exact <- restrictions_exact[as.character(poss_values_chr[poss_values_chr %in% names(restrictions_exact)])]
+
+    fixed_responses <- c(fixed_responses, rep(poss_values[poss_values_chr %in% names(restrictions_exact)], unlist(restrictions_exact)))
+
+    fixed_values <- poss_values[poss_values_chr %in% names(restrictions_exact)]
+  }
+
+  possible_values <- setdiff(poss_values, fixed_values)
+  n_fixed = length(fixed_responses)
+
+  out <- .named_list(mean, sd, n_obs, min_val, max_val, m_prec, sd_prec, n_items, restrictions_minimum, restrictions_exact, possible_values, fixed_values, fixed_responses, n_fixed)
 
   class(out) <- c("sprite_parameters", class(out))
 
@@ -95,6 +160,7 @@ set_parameters <- function(mean, sd, n_obs, min_val, max_val,
 #' @return A tibble or list (depending on the `return_tibble` argument) with:
 #' \item{outcome}{success or failure - character}
 #' \item{distribution}{The distribution that was found (if success) / that had the closest variance (if failure) - numeric}
+#' \item{mean}{The exact mean of the distribution - numeric}
 #' \item{sd}{The SD of the distribution that was found (success) / that came closest (failure) - numeric}
 #' \item{iterations}{The number of iterations required to achieve the specified SD - numeric - the first time this distribution was found}
 #'
@@ -115,9 +181,8 @@ find_possible_distributions <- function(parameters, n_distributions, seed = NULL
   outcome <- character()
   distributions <- list()
   found_sd <- numeric()
+  found_mean <- numeric()
   iterations <- numeric()
-
-
 
     duplications <- 0
 
@@ -152,6 +217,7 @@ find_possible_distributions <- function(parameters, n_distributions, seed = NULL
       } else {
         outcome <- c(res$outcome, outcome)
         found_sd <- c(res$sd, found_sd)
+        found_mean <- c(res$mean, found_mean)
         iterations <- c(res$iterations, iterations)
       }
 
@@ -160,15 +226,15 @@ find_possible_distributions <- function(parameters, n_distributions, seed = NULL
     if (n_found < n_distributions) message("Only ", n_found, " matching distributions could be found. You can try again - given that SPRITE is based on random number generation, more distributions might be found then.")
 
     if (return_tibble & suppressWarnings(requireNamespace("tibble", quietly = TRUE))) {
-      out <- tibble::tibble(id = seq_along(outcome), outcome = outcome, distribution = distributions, current_sd = found_sd, iterations = iterations)
+      out <- tibble::tibble(id = seq_along(outcome), outcome = outcome, distribution = distributions, mean = found_mean, sd = found_sd, iterations = iterations)
       if(!return_failures) return(out[out$outcome == "success",])
       out
     } else {
       if(!return_failures) {
         successes <- outcome == "success"
-      return(list(outcome = outcome[successes], distribution = distributions[successes], current_sd = found_sd[successes], iterations = iterations[successes]))
+      return(list(outcome = outcome[successes], distribution = distributions[successes], mean = found_mean[successes], sd = found_sd[successes], iterations = iterations[successes]))
       }
-      list(outcome = outcome, distribution = distributions, current_sd = found_sd, iterations = iterations)
+      list(outcome = outcome, distribution = distributions, mean = found_mean, sd = found_sd, iterations = iterations)
     }
 
 }
@@ -186,6 +252,7 @@ find_possible_distributions <- function(parameters, n_distributions, seed = NULL
 #' @return Unless `values_only = TRUE`, a list with:
 #' \item{outcome}{success or failure - character}
 #' \item{distribution}{The distribution that was found (if success) / that had the closest variance (if failure) - numeric}
+#' \item{mean}{The exact mean of the distribution - numeric}
 #' \item{sd}{The SD of the distribution that was found (success) / that came closest (failure) - numeric}
 #' \item{iterations}{The number of iterations required to achieve the specified SD - numeric}
 #' If `values_only = TRUE`, then the distribution is returned if one was found, and NULL if it failed.
@@ -203,37 +270,18 @@ find_possible_distribution <- function(parameters, seed = NULL, values_only = FA
     set.seed(seed)
   }
 
-  if (is.null(parameters$restrictions)) {
-    restricted <- NA
-    fixed_vals <- numeric()
-    fixed <- 0
-  } else {
-    restricted <- as.numeric(names(parameters$restrictions))
-    fixed_vals <- rep(restricted, unlist(parameters$restrictions))
-    fixed <- length(fixed_vals)
-  }
-  # Possible values - TK: check whether rSPRITE approach for n_items = 1 is much faster
-  # TK: Also, should include something to reflect that some (e.g., consistent) responses are more likely?
-  poss_values <- numeric()
-  for (i in seq_len(parameters$n_items)) {
-    poss_values <- c(poss_values, parameters$min_val:parameters$max_val + (1 / parameters$n_items) * (i - 1))
-  }
-
-  poss_values <- sort(poss_values[poss_values <= parameters$max_val])
-
-  poss_non_restricted <- setdiff(poss_values, restricted)
 
   # Generate some random starting data.
-  rN <- parameters$n_obs - fixed
-  vec <- sample(poss_non_restricted, rN, replace = TRUE)
+  rN <- parameters$n_obs -  parameters$n_fixed
+  vec <- sample(parameters$possible_values, rN, replace = TRUE)
 
   # Adjust mean of starting data.
-  max_loops <- parameters$n_obs * length(poss_values)
-  vec <- .adjust_mean(max_loops, vec, fixed_vals, parameters$mean, parameters$m_prec, poss_values, restricted)
+  max_loops <- parameters$n_obs * length(parameters$possible_values)
+  vec <- .adjust_mean(max_loops, vec, parameters$fixed_responses, parameters$mean, parameters$m_prec, parameters$possible_values)
 
 
   # Find distribution that also matches SD
-  maxLoops <- min(max(round(parameters$n_obs * (length(poss_non_restricted)^2)), rSprite.maxDeltaLoopsLower), rSprite.maxDeltaLoopsUpper)
+  maxLoops <- min(max(round(parameters$n_obs * (length(parameters$possible_values)^2)), rSprite.maxDeltaLoopsLower), rSprite.maxDeltaLoopsUpper)
   granule_sd <- ((0.1^parameters$sd_prec) / 2) + rSprite.dust # allow for rounding errors
 
   result <- NULL
@@ -241,28 +289,26 @@ find_possible_distribution <- function(parameters, seed = NULL, values_only = FA
   for (i in seq_len(maxLoops)) {
 
     #Should one break out of loop when vec no longer changes? Prob not worth all the comparisons?
-    current_sd <- sd(c(vec, fixed_vals))
+    current_sd <- sd(c(vec, parameters$fixed_responses))
     if (abs(current_sd - parameters$sd) <= granule_sd) {
-      result <- c(vec, fixed_vals)
+      result <- c(vec, parameters$fixed_responses)
       iter <- i
       break
     }
-    vec <- .shift_values(vec, parameters$mean, parameters$sd, parameters$min_val, parameters$max_val, parameters$m_prec, parameters$sd_prec, fixed_vals, poss_values, restricted)
+    vec <- .shift_values(vec, parameters$mean, parameters$sd, parameters$min_val, parameters$max_val, parameters$m_prec, parameters$sd_prec, parameters$fixed_responses, parameters$possible_values, parameters$fixed_values)
   }
 
   if (!is.null(result)) {
     if(values_only) return(result)
-    return(list(outcome = "success", values = result, sd = current_sd, iterations = iter))
+    return(list(outcome = "success", values = result, mean = mean(result), sd = current_sd, iterations = iter))
   } else {
     if(values_only) return(NULL)
-    return(list(outcome = "failure", values = c(vec, fixed_vals), sd = current_sd, iterations = maxLoops))
+    return(list(outcome = "failure", values = c(vec, parameters$fixed_responses), mean = mean(c(vec, parameters$fixed_responses)), sd = current_sd, iterations = maxLoops))
   }
 }
 
-.adjust_mean <- function(max_iter, vec, fixed_vals, target_mean, m_prec, poss_values, restricted) {
+.adjust_mean <- function(max_iter, vec, fixed_vals, target_mean, m_prec, poss_values) { #poss_values to exclude those restricted
 
-  # Drop restricted values, then simply move up or down the remaining possibilities
-  poss_non_restricted <- setdiff(poss_values, restricted)
   meanOK <- FALSE
 
   for (i in 1:max_iter) {
@@ -275,14 +321,14 @@ find_possible_distribution <- function(parameters, seed = NULL, values_only = FA
 
     increaseMean <- (current_mean < target_mean)
     if (increaseMean) {
-      filter <- (vec < (poss_non_restricted[length(poss_non_restricted)]))
+      filter <- (vec < (poss_values[length(poss_values)]))
     } else {
-      filter <- (vec > (poss_non_restricted[1]))
+      filter <- (vec > (poss_values[1]))
     }
 
     possible_bump <- which(filter)
     bumpMean <- possible_bump[as.integer(runif(1) * length(possible_bump)) + 1] # select a  number
-    vec[bumpMean] <- poss_non_restricted[which(poss_non_restricted == vec[bumpMean]) + ifelse(increaseMean, 1, -1)]
+    vec[bumpMean] <- poss_values[which(poss_values == vec[bumpMean]) + ifelse(increaseMean, 1, -1)]
   }
   if (!meanOK) {
     if (!is.na(restricted)) {
@@ -294,7 +340,7 @@ find_possible_distribution <- function(parameters, seed = NULL, values_only = FA
   return(vec)
 }
 
-.shift_values <- function(vec, target_mean, target_sd, min_val, max_val, m_prec = 2, sd_prec, fixed_vals, poss_values, restricted) {
+.shift_values <- function(vec, target_mean, target_sd, min_val, max_val, m_prec = 2, sd_prec, fixed_responses, poss_non_restricted, fixed_vals) { #poss_vals are only those not
 
   # Backup
   vec_original <- vec
@@ -303,14 +349,13 @@ find_possible_distribution <- function(parameters, seed = NULL, values_only = FA
   incFirst <- sample(c(TRUE, FALSE), 1)
 
   # Decide if we need to increase or decrease the SD.
-  fullVec <- c(vec, fixed_vals)
+  fullVec <- c(vec, fixed_responses)
   increaseSD <- (sd(fullVec) < target_sd)
 
-  # Only deal with fixed values when need arises
-  poss_non_restricted <- setdiff(poss_values, restricted)
+  poss_values <- sort(c(poss_non_restricted, fixed_vals))
 
-  maxToInc <- poss_non_restricted[length(poss_non_restricted) - 1] # maximum value that we can increment
-  minToDec <- poss_non_restricted[2] # minimum value that we can decrement
+  maxToInc <- poss_values[length(poss_values) - 1] # maximum value that we can increment
+  minToDec <- poss_values[2] # minimum value that we can decrement
 
   # Select an element to increment or decrement.
   # For better performance, we select from unique elements only; this means that any number that appears in the vector is
@@ -351,7 +396,7 @@ find_possible_distribution <- function(parameters, seed = NULL, values_only = FA
   # This enables us to explore different means that still round to the same target value.
   # So here we perform the first increment or decrement first, and see if the mean is still GRIM-consistent with the target mean.
   # If it is, then in a proportion of cases we don't adjust the other cell.
-  newFullVec <- c(vec, fixed_vals)
+  newFullVec <- c(vec, fixed_responses)
   newMean <- mean(newFullVec)
   meanChanged <- (round(newMean, m_prec) != target_mean) # new mean is no longer GRIM-consistent
 
@@ -473,7 +518,7 @@ find_possible_distribution <- function(parameters, seed = NULL, values_only = FA
   #added <- .get_diffs(vec, vec_original)
   #removed <- .get_diffs(vec_original, vec)
 
-  newFullVec <- c(vec, fixed_vals)
+  newFullVec <- c(vec, fixed_responses)
   newMean <- mean(newFullVec)
   meanChanged <- (round(newMean, m_prec) != target_mean) # new mean is no longer GRIM-consistent
 
