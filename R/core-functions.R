@@ -331,7 +331,7 @@ find_possible_distribution <- function(parameters, seed = NULL, values_only = FA
     vec[bumpMean] <- poss_values[which(poss_values == vec[bumpMean]) + ifelse(increaseMean, 1, -1)]
   }
   if (!meanOK) {
-    if (!is.na(restricted)) {
+    if (length(fixed_vals)>0) {
       stop("Couldn't initialize data with correct mean. This *might* be because the restrictions cannot be satisfied.")
     } else {
       stop("Couldn't initialize data with correct mean") # this probably indicates a coding error, if the mean is in range

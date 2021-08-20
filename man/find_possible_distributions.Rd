@@ -27,6 +27,7 @@ find_possible_distributions(
 A tibble or list (depending on the \code{return_tibble} argument) with:
 \item{outcome}{success or failure - character}
 \item{distribution}{The distribution that was found (if success) / that had the closest variance (if failure) - numeric}
+\item{mean}{The exact mean of the distribution - numeric}
 \item{sd}{The SD of the distribution that was found (success) / that came closest (failure) - numeric}
 \item{iterations}{The number of iterations required to achieve the specified SD - numeric - the first time this distribution was found}
 }

@@ -13,7 +13,8 @@ set_parameters(
   m_prec = NULL,
   sd_prec = NULL,
   n_items = 1,
-  restrictions = NULL
+  restrictions_exact = NULL,
+  restrictions_minimum = NULL
 )
 }
 \arguments{
@@ -36,10 +37,12 @@ reported standard deviation ends in 0.}
 \item{n_items}{Number of items in scale, if distribution represents scale averages.
 Defaults to 1, which represents any single-item measure.}
 
-\item{restrictions}{Restrictions on the frequency of specific responses, see Details)}
+\item{restrictions_exact}{Restrictions on the exact frequency of specific responses, see Details}
+
+\item{restrictions_minimum}{Restrictions on the minimum frequency of specific responses, see Details}
 }
 \value{
-A named list of parameters.
+A named list of parameters, pre-processed for further rsprite2 functions.
 }
 \description{
 The SPRITE algorithm aims to construct possible distributions that conform to
@@ -50,5 +53,11 @@ the distributions (e.g. \code{\link{find_possible_distribution}})
 \details{
 Restrictions can be used to define how often a specific value should appear in the sample.
 They need to be passed as a list in the form \code{value = frequency}. Thus, to specify that
-there should be no 3s and five 4s in the distribution, you would pass \verb{restrictions = list(3 = 0, 4 = 5)}.
+there should be no 3s and five 4s in the distribution, you would pass
+\code{restrictions_exact = list("3" = 0, "4" = 5)}. To specify that there should be at least
+one 1 and one 7, you would pass \code{restrictions_minimum = list("1" = 1, "7" = 1)}. If you just want to
+specify that the minimum and maximum values appear at least once (for instance when they are the
+reported rather than possible range), you can use the shortcut \code{restrictions_minimum = "range"}. Finally,
+if you work with multi-item scales that result in decimal responses, round those names to two decimal points, e.g.,
+when \code{n_items = 3} you could specify \code{list("1.67" = 0)}.
 }
