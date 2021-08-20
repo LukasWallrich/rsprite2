@@ -13,7 +13,7 @@ find_possible_distributions(
 )
 }
 \arguments{
-\item{parameters}{List of parameters, see \link{`set_parameters`}}
+\item{parameters}{List of parameters, see \code{\link{set_parameters}}}
 
 \item{n_distributions}{The target number of distributions to return.}
 
@@ -33,5 +33,5 @@ A tibble or list (depending on the \code{return_tibble} argument) with:
 \description{
 This function aims to find several possible distribution that would give rise to
 the observed sample parameters. For that, you need to pass a list of parameters,
-best created with \link{`set_parameters`}
+created with \code{\link{set_parameters}}
 }

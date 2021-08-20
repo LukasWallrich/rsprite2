@@ -4,12 +4,13 @@
 \name{rsprite2-package}
 \alias{rsprite2}
 \alias{rsprite2-package}
-\title{rsprite2: Identify distributions that match reported sample parameters (SPRITE)}
+\title{rsprite2: Identify Distributions that Match Reported Sample Parameters (SPRITE)}
 \description{
-This package creates possible distributions based on reported sample
-    parameters. For that, it uses the SPRITE algorithm proposed by Heathers 
-    et al. (2018). Much of the code for is based on Nick Brown's rSPRITE shiny app,
-    with some extensions.
+The SPRITE algorithm creates possible distributions based on reported sample
+    parameters (Heathers et al., 2018). This package implements it, drawing heavily on the
+    code for for Nick Brown's rSPRITE shiny app. In addition, it supports the modeling
+    of distributions based on multi-item (Likert-type) scales and the use of restrictions
+    on the frequency of particular responses.
 }
 \seealso{
 Useful links:

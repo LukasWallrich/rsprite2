@@ -45,7 +45,7 @@ A named list of parameters.
 The SPRITE algorithm aims to construct possible distributions that conform to
 observed/reported parameters. This function performs some checks and returns a list of these
 parameters that can then be passed to the functions that actually generate
-the distributions (e.g. \link{`find_possible_distribution()`})
+the distributions (e.g. \code{\link{find_possible_distribution}})
 }
 \details{
 Restrictions can be used to define how often a specific value should appear in the sample.

@@ -6,8 +6,21 @@
 \usage{
 GRIM_test(mean, n_obs, m_prec = NULL, n_items = 1, return_values = FALSE)
 }
+\arguments{
+\item{mean}{The mean of the distribution}
+
+\item{n_obs}{The number of observations (sample size)}
+
+\item{m_prec}{The precision of the mean, as number of digits after the decimal point.
+If not provided, taken based on the significant digits of \code{mean} - so only needed if reported mean ends in 0}
+
+\item{n_items}{Number of items in scale, if distribution represents scale averages.
+Defaults to 1, which represents any single-item measure.}
+
+\item{return_values}{Should all means consistent with the given parameters be returned?}
+}
 \value{
-Either TRUE/FALSE, or all possible means (if TRUE)/closest consistent mean (if FALSE)
+Either TRUE/FALSE, or all possible means (if test passes)/closest consistent mean (if test fails)
 }
 \description{
 This function tests whether a given mean (with a specific precision) can
@@ -17,10 +30,6 @@ If \code{return_values = TRUE} and if there is more than one precise mean compat
 with the given parameters, all possible means are returned. In that case, if the
 given mean is not consistent, the closest consistent mean is returned with a
 warning.
-}
-\details{
-@inheritParams set_parameters mean n_obs m_prec, n_items
-@param return_values Should all means consistent with the given parameters be returned?
 }
 \references{
 \insertRef{brown2017grim}{rsprite2}

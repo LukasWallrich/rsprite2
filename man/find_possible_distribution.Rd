@@ -7,7 +7,7 @@
 find_possible_distribution(parameters, seed = NULL, values_only = FALSE)
 }
 \arguments{
-\item{parameters}{List of parameters, see \link{`set_parameters`}}
+\item{parameters}{List of parameters, see \code{\link{set_parameters}}}
 
 \item{seed}{An integer to use as the seed for random number generation. Set this in scripts to ensure reproducibility.}
 
@@ -24,5 +24,5 @@ If \code{values_only = TRUE}, then the distribution is returned if one was found
 \description{
 This function aims to find a possible distribution that would give rise to
 the observed sample parameters. For that, you need to pass a list of parameters,
-best created with \link{`set_parameters`}
+best created with \code{\link{set_parameters}}
 }
