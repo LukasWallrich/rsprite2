@@ -3,7 +3,7 @@
 
 <!-- badges: start -->
   [![R-CMD-check](https://github.com/LukasWallrich/rsprite2/workflows/R-CMD-check/badge.svg)](https://github.com/LukasWallrich/rsprite2/actions)
-  [![Codecov test coverage](https://codecov.io/gh/LukasWallrich/sprite2/branch/master/graph/badge.svg)](https://codecov.io/gh/LukasWallrich/sprite2?branch=master)
+  [![Codecov test coverage](https://codecov.io/gh/LukasWallrich/rsprite2/branch/master/graph/badge.svg)](https://codecov.io/gh/LukasWallrich/rsprite2?branch=master)
 <!-- badges: end -->
 
 This package creates possible distributions based on reported sample parameters, using the SPRITE algorithm. This can be used to check what the original sample might have looked like, and thus to understand the data generation process better. This can help with the identification of fabricated data or misreported parameters, but also with checking whether sample characteristics such as floor/ceiling effects might suggest that findings are spurious.
