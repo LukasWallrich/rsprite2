@@ -6,7 +6,7 @@
 \usage{
 find_possible_distributions(
   parameters,
-  n_distributions,
+  n_distributions = 10,
   seed = NULL,
   return_tibble = TRUE,
   return_failures = FALSE

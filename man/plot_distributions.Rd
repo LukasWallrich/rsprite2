@@ -6,20 +6,25 @@
 \usage{
 plot_distributions(
   distributions,
-  plot_type = c("auto", "histogram", "density"),
-  max_plots = 100
+  plot_type = c("auto", "histogram", "ecdf", "density"),
+  max_plots = 100,
+  show_ids = FALSE
 )
 }
 \arguments{
-\item{distributions}{Tibble with a column \code{distribution} and an identifier (\code{id}), typically as returned from \code{\link{find_possible_distributions}}}
+\item{distributions}{Tibble with a column \code{distribution} and an identifier (\code{id}), typically as returned from \code{\link{find_possible_distributions}}.}
 
-\item{plot_type}{Plot multiple histograms, or overlapping density plots? "auto" is to plot histograms if up to 9 distributions are passed, or if there are fewer than 10 discrete values, and density plots otherwise}
+\item{plot_type}{Plot multiple histograms, or overlapping cumulative distribution plots, or density plots? "auto" is to plot histograms if up to 9 distributions are passed, or if there are fewer than 10 discrete values, and empirical cumulative distribution plots otherwise}
 
 \item{max_plots}{How many distributions should \emph{at most} be plotted? If more are passed, this number is randomly selected.}
+
+\item{show_ids}{Should ids of the distributions be shown with ecdf and density charts? Defaults to no, since the default ids are not meaningful.}
 }
 \value{
 A ggplot2 object that can be styled with functions such as \code{\link[ggplot2]{labs}} or \code{\link[ggplot2]{theme_linedraw}}
 }
 \description{
 This plots distributions identified by \code{\link{find_possible_distributions}} using ggplot2.
+They can be shown as histograms or as \href{https://towardsdatascience.com/what-why-and-how-to-read-empirical-cdf-123e2b922480}{cumulative distributions (ECDF) plots}. The latter give
+more information, yet not all audiences are familiar with them.
 }
