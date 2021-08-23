@@ -10,7 +10,7 @@
 #' @param plot_type Plot multiple histograms, or overlapping density plots? "auto" is to plot histograms if up to 9 distributions are passed, or if there are fewer than 10 discrete values, and density plots otherwise
 #' @param plot_type How many distributions should *at most* be plotted? If more are passed, this number is randomly selected.
 #'
-#' @return A ggplot2 object that can be styled with functions such as \code{\link[ggplot2]{labs} or \code{\link[ggplot2]{theme_linedraw}}
+#' @return A ggplot2 object that can be styled with functions such as \code{\link[ggplot2]{labs}} or \code{\link[ggplot2]{theme_linedraw}}
 #' @export
 
 plot_distributions <- function(distributions, plot_type = c("auto", "histogram", "density"), max_plots = 100) {

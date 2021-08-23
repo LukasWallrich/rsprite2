@@ -16,7 +16,7 @@ plot_distributions(
 \item{plot_type}{How many distributions should \emph{at most} be plotted? If more are passed, this number is randomly selected.}
 }
 \value{
-A ggplot2 object that can be styled with functions such as \code{\link[ggplot2]{labs} or \code{\link[ggplot2]{theme_linedraw}}
+A ggplot2 object that can be styled with functions such as \code{\link[ggplot2]{labs}} or \code{\link[ggplot2]{theme_linedraw}}
 }
 \description{
 This plots distributions identified by \code{\link{find_possible_distributions}} using ggplot2.
