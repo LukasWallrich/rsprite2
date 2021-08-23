@@ -73,7 +73,7 @@ set_parameters <- function(mean, sd, n_obs, min_val, max_val,
     stop("The mean is outside the possible range, which is impossible - please check inputs.")
     }
 
-  if (restrictions_minimum == "range") {
+  if (!is.null(restrictions_minimum) && restrictions_minimum == "range") {
     restrictions_minimum <- list(1, 1)
     names(restrictions_minimum) <- c(min_val, max_val)
   }
@@ -168,7 +168,7 @@ set_parameters <- function(mean, sd, n_obs, min_val, max_val,
 #'
 
 
-find_possible_distributions <- function(parameters, n_distributions, seed = NULL, return_tibble = TRUE, return_failures = FALSE) {
+find_possible_distributions <- function(parameters, n_distributions = 10, seed = NULL, return_tibble = TRUE, return_failures = FALSE) {
 
   if (!is.null(seed)) {
     assert_int(seed)
@@ -227,6 +227,8 @@ find_possible_distributions <- function(parameters, n_distributions, seed = NULL
 
     if (return_tibble & suppressWarnings(requireNamespace("tibble", quietly = TRUE))) {
       out <- tibble::tibble(id = seq_along(outcome), outcome = outcome, distribution = distributions, mean = found_mean, sd = found_sd, iterations = iterations)
+      class(out) <- c("sprite_distributions", class(out))
+      attr(out, "parameters") <- parameters
       if(!return_failures) return(out[out$outcome == "success",])
       out
     } else {

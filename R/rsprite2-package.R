@@ -27,7 +27,7 @@ rSprite.huge <- 1e15 #Should this not be Inf?
 NULL
 
 .check_req_packages <- function(x, note = "") {
-  res <- suppressWarnings(lapply(x, requireNamespace, quietly = TRUE)) %>% unlist()
+  res <- unlist(suppressWarnings(lapply(x, requireNamespace, quietly = TRUE)))
   if (!all(res)) {
     if (!interactive()) {
       stop(paste0(note, "Some required packages are not installed. Make sure you have
