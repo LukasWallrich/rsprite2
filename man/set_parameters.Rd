@@ -61,3 +61,19 @@ reported rather than possible range), you can use the shortcut \code{restriction
 if you work with multi-item scales that result in decimal responses, round those names to two decimal points, e.g.,
 when \code{n_items = 3} you could specify \code{list("1.67" = 0)}.
 }
+\examples{
+
+set.seed(1234) #To get reproducible results
+
+# Simple case
+sprite_parameters <- set_parameters(mean = 2.2, sd = 1.3, n_obs = 20, min_val = 1, max_val = 5)
+find_possible_distribution(sprite_parameters)
+
+# With restrictions
+sprite_parameters <- set_parameters(mean = 1.95, sd = 1.55, n_obs = 20,
+                                    min_val = 1, max_val = 5, n_items = 3,
+                                    restrictions_exact = list("3"=0, "3.67" = 2),
+                                    restrictions_minimum = "range")
+find_possible_distribution(sprite_parameters)
+
+}

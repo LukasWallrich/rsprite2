@@ -1,6 +1,6 @@
 Package: rsprite2
 Title: Identify Distributions that Match Reported Sample Parameters (SPRITE)
-Version: 0.0.0.9001
+Version: 0.1.0
 Authors@R: 
     person(given = "Lukas",
            family = "Wallrich",
@@ -9,7 +9,7 @@ Authors@R:
            comment = c(ORCID = "0000-0003-2121-5177"))
 Description: The SPRITE algorithm creates possible distributions based on reported sample
     parameters (Heathers et al., 2018). This package implements it, drawing heavily on the
-    code for for Nick Brown's rSPRITE shiny app. In addition, it supports the modeling
+    code for for Nick Brown's 'rSPRITE' Shiny app. In addition, it supports the modeling
     of distributions based on multi-item (Likert-type) scales and the use of restrictions
     on the frequency of particular responses.
 License: MIT + file LICENSE
@@ -21,9 +21,10 @@ Suggests:
     ggplot2,
     testthat (>= 3.0.0),
     tibble,
-    tidyr
+    tidyr,
+    scales
 Config/testthat/edition: 3
-URL: https://github.com/LukasWallrich/rsprite2
+URL: https://github.com/LukasWallrich/rsprite2#readme
 BugReports: https://github.com/LukasWallrich/rsprite2/issues
 Imports: 
     checkmate,

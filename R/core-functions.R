@@ -30,6 +30,22 @@
 #' @param restrictions_minimum Restrictions on the minimum frequency of specific responses, see Details
 #'
 #' @return A named list of parameters, pre-processed for further rsprite2 functions.
+#'
+#' @examples
+#'
+#' set.seed(1234) #To get reproducible results
+#'
+#' # Simple case
+#' sprite_parameters <- set_parameters(mean = 2.2, sd = 1.3, n_obs = 20, min_val = 1, max_val = 5)
+#' find_possible_distribution(sprite_parameters)
+#'
+#' # With restrictions
+#' sprite_parameters <- set_parameters(mean = 1.95, sd = 1.55, n_obs = 20,
+#'                                     min_val = 1, max_val = 5, n_items = 3,
+#'                                     restrictions_exact = list("3"=0, "3.67" = 2),
+#'                                     restrictions_minimum = "range")
+#' find_possible_distribution(sprite_parameters)
+#'
 #' @export
 
 set_parameters <- function(mean, sd, n_obs, min_val, max_val,
@@ -130,7 +146,7 @@ set_parameters <- function(mean, sd, n_obs, min_val, max_val,
   }
 
   possible_values <- setdiff(poss_values, fixed_values)
-  n_fixed = length(fixed_responses)
+  n_fixed <- length(fixed_responses)
 
   out <- .named_list(mean, sd, n_obs, min_val, max_val, m_prec, sd_prec, n_items, restrictions_minimum, restrictions_exact, possible_values, fixed_values, fixed_responses, n_fixed)
 
@@ -164,8 +180,14 @@ set_parameters <- function(mean, sd, n_obs, min_val, max_val,
 #' \item{sd}{The SD of the distribution that was found (success) / that came closest (failure) - numeric}
 #' \item{iterations}{The number of iterations required to achieve the specified SD - numeric - the first time this distribution was found}
 #'
-#' @export
+#' @examples
 #'
+#' sprite_parameters <- set_parameters(mean = 2.2, sd = 1.3, n_obs = 20,
+#'                                     min_val = 1, max_val = 5)
+#'
+#' find_possible_distributions(sprite_parameters, 5, seed = 1234)
+#'
+#' @export
 
 
 find_possible_distributions <- function(parameters, n_distributions = 10, seed = NULL, return_tibble = TRUE, return_failures = FALSE) {
@@ -258,6 +280,11 @@ find_possible_distributions <- function(parameters, n_distributions = 10, seed =
 #' \item{sd}{The SD of the distribution that was found (success) / that came closest (failure) - numeric}
 #' \item{iterations}{The number of iterations required to achieve the specified SD - numeric}
 #' If `values_only = TRUE`, then the distribution is returned if one was found, and NULL if it failed.
+#'
+#' @examples
+#' sprite_parameters <- set_parameters(mean = 2.2, sd = 1.3, n_obs = 20,
+#'                                     min_val = 1, max_val = 5)
+#' find_possible_distribution(sprite_parameters)
 #'
 #' @export
 #'
@@ -463,7 +490,7 @@ find_possible_distribution <- function(parameters, seed = NULL, values_only = FA
           from <- low[low %in% vec]
         }
         if (length(from) > 0) {
-          replace <- sample(1:length(from), 1)
+          replace <- sample(seq_along(from), 1)
           vec[cumsum(cumsum(vec == from[replace])) == 1] <- to[replace]
           gap_resolved <- TRUE
         }
@@ -493,7 +520,7 @@ find_possible_distribution <- function(parameters, seed = NULL, values_only = FA
               }
               if (length(from) > 0) {
                 replaced <- replaced + 1
-                replace <- sample(1:length(from), 1)
+                replace <- sample(seq_along(from), 1)
                 vec[cumsum(cumsum(vec == from[replace])) == 1] <- to[replace]
               } else {
                 break
@@ -517,10 +544,7 @@ find_possible_distribution <- function(parameters, seed = NULL, values_only = FA
     }
   }
 
-  #added <- .get_diffs(vec, vec_original)
-  #removed <- .get_diffs(vec_original, vec)
-
-  newFullVec <- c(vec, fixed_responses)
+   newFullVec <- c(vec, fixed_responses)
   newMean <- mean(newFullVec)
   meanChanged <- (round(newMean, m_prec) != target_mean) # new mean is no longer GRIM-consistent
 
@@ -533,15 +557,6 @@ find_possible_distribution <- function(parameters, seed = NULL, values_only = FA
 
   return(vec)
 
-}
-
-.get_diffs <- function(x, y) {
-  x_tbl <- table(x)
-  y_tbl <- table(y)
-  y_tbl_ord <- y_tbl[names(x_tbl)]
-  y_tbl_ord[is.na(y_tbl_ord)] <- 0
-  x_tbl <- x_tbl - y_tbl_ord
-  as.numeric(rep(names(x_tbl), pmax(x_tbl,0)))
 }
 
 .equalish <- function(x, y, tol = rSprite.dust) {
@@ -563,6 +578,14 @@ find_possible_distribution <- function(parameters, seed = NULL, values_only = FA
 #' @inheritParams set_parameters
 #'
 #' @return Either TRUE/FALSE, or all possible means (if test passes)/closest consistent mean (if test fails)
+#' @export
+#'
+#' @examples
+#' # A sample of 28 integers cannot result in a mean of 5.19. This is shown by
+#' GRIM_test(5.19, 28)
+#'
+#' # To find the closest possible mean, set return_values to TRUE
+#' GRIM_test(5.19, 28, return_values = TRUE)
 #'
 #' @references
 #' \insertRef{brown2017grim}{rsprite2}

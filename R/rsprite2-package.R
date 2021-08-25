@@ -45,7 +45,7 @@ NULL
     choice <- readline(prompt = "Should I try to install these packages? (Y/N)")
     if (choice %in% c("Y", "y")) {
       utils::install.packages(x[!res])
-      res <- suppressWarnings(lapply(x, requireNamespace, quietly = TRUE)) %>% unlist()
+      res <- unlist(suppressWarnings(lapply(x, requireNamespace, quietly = TRUE)))
       if (!all(res)) {
         stop("Not all packages could be installed successfully. The following could still not be loaded: ", paste0(x[!res], collapse = ", "),
              call. = FALSE

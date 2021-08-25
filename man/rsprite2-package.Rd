@@ -6,16 +6,18 @@
 \alias{rsprite2-package}
 \title{rsprite2: Identify Distributions that Match Reported Sample Parameters (SPRITE)}
 \description{
+\if{html}{\figure{logo.png}{options: align='right' alt='logo' width='120'}}
+
 The SPRITE algorithm creates possible distributions based on reported sample
     parameters (Heathers et al., 2018). This package implements it, drawing heavily on the
-    code for for Nick Brown's rSPRITE shiny app. In addition, it supports the modeling
+    code for for Nick Brown's 'rSPRITE' Shiny app. In addition, it supports the modeling
     of distributions based on multi-item (Likert-type) scales and the use of restrictions
     on the frequency of particular responses.
 }
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/LukasWallrich/rsprite2}
+  \item \url{https://github.com/LukasWallrich/rsprite2#readme}
   \item Report bugs at \url{https://github.com/LukasWallrich/rsprite2/issues}
 }
 

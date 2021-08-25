@@ -31,6 +31,14 @@ with the given parameters, all possible means are returned. In that case, if the
 given mean is not consistent, the closest consistent mean is returned with a
 warning.
 }
+\examples{
+# A sample of 28 integers cannot result in a mean of 5.19. This is shown by
+GRIM_test(5.19, 28)
+
+# To find the closest possible mean, set return_values to TRUE
+GRIM_test(5.19, 28, return_values = TRUE)
+
+}
 \references{
 \insertRef{brown2017grim}{rsprite2}
 }

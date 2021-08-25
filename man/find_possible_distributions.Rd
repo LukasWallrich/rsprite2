@@ -6,7 +6,7 @@
 \usage{
 find_possible_distributions(
   parameters,
-  n_distributions,
+  n_distributions = 10,
   seed = NULL,
   return_tibble = TRUE,
   return_failures = FALSE
@@ -35,4 +35,12 @@ A tibble or list (depending on the \code{return_tibble} argument) with:
 This function aims to find several possible distribution that would give rise to
 the observed sample parameters. For that, you need to pass a list of parameters,
 created with \code{\link{set_parameters}}
+}
+\examples{
+
+sprite_parameters <- set_parameters(mean = 2.2, sd = 1.3, n_obs = 20,
+                                    min_val = 1, max_val = 5)
+
+find_possible_distributions(sprite_parameters, 5, seed = 1234)
+
 }

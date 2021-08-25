@@ -27,3 +27,9 @@ This function aims to find a possible distribution that would give rise to
 the observed sample parameters. For that, you need to pass a list of parameters,
 best created with \code{\link{set_parameters}}
 }
+\examples{
+sprite_parameters <- set_parameters(mean = 2.2, sd = 1.3, n_obs = 20,
+                                    min_val = 1, max_val = 5)
+find_possible_distribution(sprite_parameters)
+
+}

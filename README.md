@@ -4,6 +4,7 @@
 <!-- badges: start -->
   [![R-CMD-check](https://github.com/LukasWallrich/rsprite2/workflows/R-CMD-check/badge.svg)](https://github.com/LukasWallrich/rsprite2/actions)
   [![Codecov test coverage](https://codecov.io/gh/LukasWallrich/rsprite2/branch/master/graph/badge.svg)](https://codecov.io/gh/LukasWallrich/rsprite2?branch=master)
+  [![R badge](https://img.shields.io/badge/Build%20with-♥%20and%20R-blue)](https://github.com/LukasWallrich/rsprite2)
 <!-- badges: end -->
 
 This package creates possible distributions based on reported sample parameters, using the SPRITE algorithm. This can be used to check what the original sample might have looked like, and thus to understand the data generation process better. This can help with the identification of fabricated data or misreported parameters, but also with checking whether sample characteristics such as floor/ceiling effects might suggest that findings are spurious.
@@ -56,7 +57,7 @@ plot_distributions(res)
 
 ### Multi-item scales
 
-Often, several Likert-type items are averaged to measure a single construct (e.g., participants might be asked how happy, satisfied and fulfilled they are, with the results averaged into a measure of well-being). The resulting distribution can be explored by rsprite2 by specifying the `n_items` parameter.
+Often, several Likert-type items are averaged to measure a single construct (e.g., participants might be asked how happy, satisfied and fulfilled they are, with the results averaged into a measure of well-being). Possible resulting distribution can be explored by rsprite2 by specifying the `n_items` parameter.
 
 ``` r
 sprite_parameters <- set_parameters(mean = 1.95, sd = 1.55, n_obs = 20, 
@@ -75,7 +76,3 @@ sprite_parameters <- set_parameters(mean = 1.95, sd = 1.55, n_obs = 20,
                                     restrictions_minimum = list("1" = 1, "5" = 1))
 find_possible_distribution(sprite_parameters)
 ```
-
-# Limitations / notes for future development
-
-- `set_parameters` does not consider the restrictions set when running the GRIM test. Doing so would help to catch *some* impossible restrictions at this stage.
