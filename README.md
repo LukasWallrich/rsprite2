@@ -9,7 +9,7 @@
 
 This package creates possible distributions based on reported sample parameters, using the SPRITE algorithm. This can be used to check what the original sample might have looked like, and thus to understand the data generation process better. This can help with the identification of fabricated data or misreported parameters, but also with checking whether sample characteristics such as floor/ceiling effects might suggest that findings are spurious.
 
-For that, it implements the SPRITE algorithm proposed by [Heathers et al. (2018)](https://peerj.com/preprints/26968.pdf). Much of the code for is based on [Nick Brown's rSPRITE shiny app](https://github.com/sTeamTraen/rSPRITE), with some extensions. If you are just interested in interactive use and do not need these extensions (see advanced usage below) that [Shiny online app](https://shiny.ieis.tue.nl/sprite/) might be better for you 
+For that, it implements the SPRITE algorithm proposed by [Heathers et al. (2018)](https://peerj.com/preprints/26968.pdf). Much of the code for is based on [Nick Brown's rSPRITE shiny app](https://github.com/sTeamTraen/rSPRITE), with some extensions. If you are just interested in interactive use and do not need these extensions (see advanced usage below) that [Shiny online app](http://shiny.ieis.tue.nl/sprite/) might be better for you 
 
 ## Installation
 
