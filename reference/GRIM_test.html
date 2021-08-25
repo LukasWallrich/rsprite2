@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • rsprite2</title>
+<title>GRIM test for mean — GRIM_test • rsprite2</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,7 +46,14 @@
 
 
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="GRIM test for mean — GRIM_test" />
+<meta property="og:description" content="This function tests whether a given mean (with a specific precision) can
+result from a sample of a given size based on integer responses to one or more
+items. The test is based on Brown &amp;amp; Heathers (2017).
+If return_values = TRUE and if there is more than one precise mean compatible
+with the given parameters, all possible means are returned. In that case, if the
+given mean is not consistent, the closest consistent mean is returned with a
+warning." />
 <meta property="og:image" content="https://lukaswallrich.github.io/rsprite2/logo.png" />
 
 
@@ -66,7 +73,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -116,66 +123,70 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>GRIM test for mean</h1>
+    <small class="dont-index">Source: <a href='https://github.com/LukasWallrich/rsprite2/blob/master/R/core-functions.R'><code>R/core-functions.R</code></a></small>
+    <div class="hidden name"><code>GRIM_test.Rd</code></div>
     </div>
 
-    <table class="ref-index">
+    <div class="ref-description">
+    <p>This function tests whether a given mean (with a specific precision) can
+result from a sample of a given size based on integer responses to one or more
+items. The test is based on Brown &amp; Heathers (2017).
+If <code>return_values = TRUE</code> and if there is more than one precise mean compatible
+with the given parameters, all possible means are returned. In that case, if the
+given mean is not consistent, the closest consistent mean is returned with a
+warning.</p>
+    </div>
 
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
+    <pre class="usage"><span class='fu'>GRIM_test</span><span class='op'>(</span><span class='va'>mean</span>, <span class='va'>n_obs</span>, m_prec <span class='op'>=</span> <span class='cn'>NULL</span>, n_items <span class='op'>=</span> <span class='fl'>1</span>, return_values <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
 
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="GRIM_test.html">GRIM_test()</a></code> </p>
-        </td>
-        <td><p>GRIM test for mean</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="find_possible_distribution.html">find_possible_distribution()</a></code> </p>
-        </td>
-        <td><p>Find a possible distribution.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="find_possible_distributions.html">find_possible_distributions()</a></code> </p>
-        </td>
-        <td><p>Find several possible distributions.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="plot_distributions.html">plot_distributions()</a></code> </p>
-        </td>
-        <td><p>Plot distributions</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="set_parameters.html">set_parameters()</a></code> </p>
-        </td>
-        <td><p>Define parameters for SPRITE algorithm</p></td>
-      </tr>
-    </tbody>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>mean</th>
+      <td><p>The mean of the distribution</p></td>
+    </tr>
+    <tr>
+      <th>n_obs</th>
+      <td><p>The number of observations (sample size)</p></td>
+    </tr>
+    <tr>
+      <th>m_prec</th>
+      <td><p>The precision of the mean, as number of digits after the decimal point.
+If not provided, taken based on the significant digits of <code>mean</code> - so only needed if reported mean ends in 0</p></td>
+    </tr>
+    <tr>
+      <th>n_items</th>
+      <td><p>Number of items in scale, if distribution represents scale averages.
+Defaults to 1, which represents any single-item measure.</p></td>
+    </tr>
+    <tr>
+      <th>return_values</th>
+      <td><p>Should all means consistent with the given parameters be returned?</p></td>
+    </tr>
     </table>
-  </div>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>Either TRUE/FALSE, or all possible means (if test passes)/closest consistent mean (if test fails)</p>
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>Brown NJ, Heathers JA (2017).
+&#8220;The GRIM test: A simple technique detects numerous anomalies in the reporting of results in psychology.&#8221;
+<em>Social Psychological and Personality Science</em>, <b>8</b>(4), 363--369.</p>
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='co'># A sample of 28 integers cannot result in a mean of 5.19. This is shown by</span>
+<span class='fu'>GRIM_test</span><span class='op'>(</span><span class='fl'>5.19</span>, <span class='fl'>28</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] FALSE</div><div class='input'>
+<span class='co'># To find the closest possible mean, set return_values to TRUE</span>
+<span class='fu'>GRIM_test</span><span class='op'>(</span><span class='fl'>5.19</span>, <span class='fl'>28</span>, return_values <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: Mean 5.19 fails GRIM test - closest consistent value: 5.18</span></div><div class='output co'>#&gt; [1] 5.18</div><div class='input'>
+</div></pre>
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>
