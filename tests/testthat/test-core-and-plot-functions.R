@@ -3,6 +3,7 @@ test_that("GRIM works", {
   expect_true(GRIM_test(5.18, 14, n_items = 2))
   expect_warning(closest <- GRIM_test(5.19, 28, return_values = TRUE))
   expect_equal(closest, 5.18)
+  expect_equal(GRIM_test(5.2, 20, return_values = TRUE), c(5.2, 5.25, 5.15))
 })
 
 set.seed(1234)
@@ -39,6 +40,13 @@ if (all(requireNamespace(req_packages, quietly = TRUE))) {
 
   test_that("ecdf plot is produced", {
     expect_class(p$layers[[1]]$stat, "StatEcdf")
+    expect_identical(p$scales$scales[[1]]$limits, c(1, 5))
+  })
+
+    p <- plot_distributions(poss, plot_type = "density")
+
+  test_that("density plot is produced", {
+    expect_class(p$layers[[1]]$stat, "StatDensity")
     expect_identical(p$scales$scales[[1]]$limits, c(1, 5))
   })
 
