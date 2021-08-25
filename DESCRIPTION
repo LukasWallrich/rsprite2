@@ -24,7 +24,7 @@ Suggests:
     tidyr,
     scales
 Config/testthat/edition: 3
-URL: https://github.com/LukasWallrich/rsprite2#readme
+URL: https://lukaswallrich.github.io/rsprite2/
 BugReports: https://github.com/LukasWallrich/rsprite2/issues
 Imports: 
     checkmate,
