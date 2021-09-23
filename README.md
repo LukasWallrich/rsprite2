@@ -13,7 +13,13 @@ For that, it implements the SPRITE algorithm proposed by [Heathers et al. (2018)
 
 ## Installation
 
-rsprite 2 is not (yet?) on CRAN. Therefore, you need to install it from GitHub with:
+rsprite2 can be installed from CRAN with:
+
+``` r
+install.packages("rsprite2")
+```
+
+Or you might want to install the development version from GitHub:
 
 ``` r
 install.packages("remotes")
