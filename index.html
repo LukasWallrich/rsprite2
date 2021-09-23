@@ -21,7 +21,7 @@
 <meta property="og:description" content="The SPRITE algorithm creates possible distributions of discrete responses
     based on reported sample parameters, such as mean, standard deviation and range 
     (Heathers et al., 2018, &lt;doi:10.7287/peerj.preprints.26968v1&gt;). This package implements it, 
-    drawing heavily on the code for for Nick Browns rSPRITE' Shiny app &lt;http://shiny.ieis.tue.nl/sprite/&gt;. 
+    drawing heavily on the code for Nick Browns rSPRITE' Shiny app &lt;http://shiny.ieis.tue.nl/sprite/&gt;. 
     In addition, it supports the modeling of distributions based on multi-item (Likert-type) 
     scales and the use of restrictions on the frequency of particular responses.">
 <meta property="og:image" content="https://lukaswallrich.github.io/rsprite2/logo.png">
@@ -91,8 +91,11 @@
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
-<p>rsprite 2 is not (yet?) on CRAN. Therefore, you need to install it from GitHub with:</p>
+<p>rsprite2 can be installed from CRAN with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"rsprite2"</span><span class="op">)</span></code></pre></div>
+<p>Or you might want to install the development version from GitHub:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
 <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">'LukasWallrich/rsprite2'</span><span class="op">)</span></code></pre></div>
 </div>
@@ -101,20 +104,20 @@
 <a href="#simple-example" class="anchor"></a>Simple example</h2>
 <p>To create possible distributions, SPRITE needs the reported mean, standard deviation, sample size and range of values.</p>
 <p>For instance, what distribution of 20 responses on a 1 to 5 scale might result in a mean of 2.2 and a standard deviation of 1.3?</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://lukaswallrich.github.io/rsprite2/">rsprite2</a></span><span class="op">)</span>
 <span class="va">sprite_parameters</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/set_parameters.html">set_parameters</a></span><span class="op">(</span>mean <span class="op">=</span> <span class="fl">2.2</span>, sd <span class="op">=</span> <span class="fl">1.3</span>, n_obs <span class="op">=</span> <span class="fl">20</span>, min_val <span class="op">=</span> <span class="fl">1</span>, max_val <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>
 <span class="fu"><a href="reference/find_possible_distribution.html">find_possible_distribution</a></span><span class="op">(</span><span class="va">sprite_parameters</span><span class="op">)</span></code></pre></div>
 <p>If these means and standard deviations had been reported to two decimal places, they might be 2.20 and 1.33. NB: Given that trailing zeroes are ignored by R, you need to <em>specify the precision if mean or standard deviation ends in 0</em>.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sprite_parameters</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/set_parameters.html">set_parameters</a></span><span class="op">(</span>mean <span class="op">=</span> <span class="fl">2.20</span>, m_prec <span class="op">=</span> <span class="fl">2</span>, sd <span class="op">=</span> <span class="fl">1.32</span>, 
                                     n_obs <span class="op">=</span> <span class="fl">20</span>, min_val <span class="op">=</span> <span class="fl">1</span>, max_val <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>
 <span class="fu"><a href="reference/find_possible_distribution.html">find_possible_distribution</a></span><span class="op">(</span><span class="va">sprite_parameters</span><span class="op">)</span></code></pre></div>
 <p>To find more than one distribution that matches the parameters, you can use <code><a href="reference/find_possible_distributions.html">find_possible_distributions()</a></code></p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/find_possible_distributions.html">find_possible_distributions</a></span><span class="op">(</span><span class="va">sprite_parameters</span>, <span class="fl">10</span><span class="op">)</span></code></pre></div>
 <p>They can then be plotted to identify features that are shared across distributions.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/find_possible_distributions.html">find_possible_distributions</a></span><span class="op">(</span><span class="va">sprite_parameters</span>, <span class="fl">10</span><span class="op">)</span>
 <span class="fu"><a href="reference/plot_distributions.html">plot_distributions</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></code></pre></div>
 </div>
@@ -125,7 +128,7 @@
 <h3 class="hasAnchor">
 <a href="#multi-item-scales" class="anchor"></a>Multi-item scales</h3>
 <p>Often, several Likert-type items are averaged to measure a single construct (e.g., participants might be asked how happy, satisfied and fulfilled they are, with the results averaged into a measure of well-being). Possible resulting distribution can be explored by rsprite2 by specifying the <code>n_items</code> parameter.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sprite_parameters</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/set_parameters.html">set_parameters</a></span><span class="op">(</span>mean <span class="op">=</span> <span class="fl">1.95</span>, sd <span class="op">=</span> <span class="fl">1.55</span>, n_obs <span class="op">=</span> <span class="fl">20</span>, 
                                     min_val <span class="op">=</span> <span class="fl">1</span>, max_val <span class="op">=</span> <span class="fl">5</span>, n_items <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>
 <span class="fu"><a href="reference/find_possible_distribution.html">find_possible_distribution</a></span><span class="op">(</span><span class="va">sprite_parameters</span><span class="op">)</span></code></pre></div>
@@ -134,7 +137,7 @@
 <h3 class="hasAnchor">
 <a href="#restrictions" class="anchor"></a>Restrictions</h3>
 <p>Sometimes, you might know how often certain values should appear in the distribution. Such restrictions need to be passed to the <code><a href="reference/set_parameters.html">set_parameters()</a></code> function as a named list. They can either specify the exact number of occurrences (<code>restrictions_exact</code>) or the minimum number of occurrences (<code>restrictions_minimum</code>) of a specific value.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sprite_parameters</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/set_parameters.html">set_parameters</a></span><span class="op">(</span>mean <span class="op">=</span> <span class="fl">1.95</span>, sd <span class="op">=</span> <span class="fl">1.55</span>, n_obs <span class="op">=</span> <span class="fl">20</span>, 
                                     min_val <span class="op">=</span> <span class="fl">1</span>, max_val <span class="op">=</span> <span class="fl">5</span>, n_items <span class="op">=</span> <span class="fl">3</span>,
                                     restrictions_exact <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"3"</span><span class="op">=</span><span class="fl">0</span>, <span class="st">"3.67"</span> <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>,
@@ -149,6 +152,8 @@
     <div class="links">
 <h2>Links</h2>
 <ul class="list-unstyled">
+<li>Download from CRAN at <br><a href="https://cloud.r-project.org/package=rsprite2">https://​cloud.r-project.org/​package=rsprite2</a>
+</li>
 <li>Browse source code at <br><a href="https://github.com/LukasWallrich/rsprite2/">https://​github.com/​LukasWallrich/​rsprite2/​</a>
 </li>
 <li>Report a bug at <br><a href="https://github.com/LukasWallrich/rsprite2/issues">https://​github.com/​LukasWallrich/​rsprite2/​issues</a>
