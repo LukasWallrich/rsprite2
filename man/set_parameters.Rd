@@ -14,7 +14,8 @@ set_parameters(
   sd_prec = NULL,
   n_items = 1,
   restrictions_exact = NULL,
-  restrictions_minimum = NULL
+  restrictions_minimum = NULL,
+  dont_test = FALSE
 )
 }
 \arguments{
@@ -40,6 +41,10 @@ Defaults to 1, which represents any single-item measure.}
 \item{restrictions_exact}{Restrictions on the exact frequency of specific responses, see Details}
 
 \item{restrictions_minimum}{Restrictions on the minimum frequency of specific responses, see Details}
+
+\item{dont_test}{By default, this function tests whether the mean is possible, given the sample size (GRIM-test) and whether
+the standard deviation is possible, given mean and sample size (GRIMMER test), and fails otherwise. If you want to override this,
+and run SPRITE anyway, you can set this to TRUE.}
 }
 \value{
 A named list of parameters, pre-processed for further rsprite2 functions.

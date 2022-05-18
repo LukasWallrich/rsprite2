@@ -28,6 +28,9 @@
 #' Defaults to 1, which represents any single-item measure.
 #' @param restrictions_exact Restrictions on the exact frequency of specific responses, see Details
 #' @param restrictions_minimum Restrictions on the minimum frequency of specific responses, see Details
+#' @param dont_test By default, this function tests whether the mean is possible, given the sample size (GRIM-test) and whether
+#' the standard deviation is possible, given mean and sample size (GRIMMER test), and fails otherwise. If you want to override this,
+#' and run SPRITE anyway, you can set this to TRUE.
 #'
 #' @return A named list of parameters, pre-processed for further rsprite2 functions.
 #'
@@ -51,7 +54,8 @@
 set_parameters <- function(mean, sd, n_obs, min_val, max_val,
                            m_prec = NULL, sd_prec = NULL,
                            n_items = 1, restrictions_exact = NULL,
-                           restrictions_minimum = NULL) {
+                           restrictions_minimum = NULL,
+                           dont_test = FALSE) {
   if (is.null(m_prec)) {
     m_prec <- max(nchar(sub("^[0-9]*", "", mean)) - 1, 0)
   }
@@ -73,9 +77,19 @@ set_parameters <- function(mean, sd, n_obs, min_val, max_val,
     stop("max_val needs to be larger than min_val")
   }
 
-  if (!GRIM_test(mean, n_obs, m_prec, n_items)) {
-    stop("The mean is not consistent with this number of observations (fails GRIM test).
-         You can use GRIM_test() to identify the closest possible mean and try again.")
+  if (!dont_test) {
+
+    if (n_obs * n_items <= 10 ^ m_prec) {
+      if (!GRIM_test(mean, n_obs, m_prec, n_items)) {
+        stop("The mean is not consistent with this number of observations (fails GRIM test).
+             You can use GRIM_test() to identify the closest possible mean and try again.")
+      }
+      }
+
+  if (!GRIMMER_test(mean, sd, n_obs, m_prec, sd_prec, n_items)) {
+    stop("The standard deviation is not consistent with this mean and number of observations (fails GRIMMER test).
+         For details, see ?GRIMMER_test.")
+  }
   }
 
   sd_limits <- .sd_limits(n_obs, mean, min_val, max_val, sd_prec, n_items = 1)
@@ -602,6 +616,10 @@ GRIM_test <- function(mean, n_obs, m_prec = NULL, n_items = 1, return_values = F
   assert_logical(return_values)
   assert_number(mean)
 
+  if (n_obs * n_items > 10 ^ m_prec) {
+    warning("The sample size (x number of items) is too big compared to the precision of the reported mean. The GRIM test is only meaningful when N < 10 ^ precision (e.g. N < 100 for means reported to two decimal places).")
+  }
+
   int <- round(mean * n_obs * n_items) # nearest integer
   frac <- int / (n_obs * n_items) # mean resulting from nearest integer
   dif <- abs(mean - frac)
@@ -677,4 +695,118 @@ GRIM_test <- function(mean, n_obs, m_prec = NULL, n_items = 1, return_values = F
   return(result)
 }
 
+#' GRIMMER test for standard deviation
+#'
+#' This function tests whether a given standard deviation (with a specific precision)
+#' can result from a sample of a given size based on integer responses to one or more
+#' items. The test was first proposed by [Anaya (2016)](https://peerj.com/preprints/2400/); here, the algorithm
+#' developed by [Allard (2018)](https://aurelienallard.netlify.app/post/anaytic-grimmer-possibility-standard-deviations/) is used.
+#'
+#' @inheritParams set_parameters
+#'
+#' @return Logical TRUE/FALSE indicating whether given standard deviation is possible, given the other parameters
+#' @export
+#'
+#' @examples
+#' # A sample of 18 integers with mean 3.44 cannot have an SD of 2.47. This is shown by
+#' GRIMMER_test(mean = 3.44, sd = 2.47, n_obs = 18)
+#'
+#'
+#' @references
+#' \insertRef{anaya2016grimmer}{rsprite2}
 
+# ToDos:
+# - add return_values argument to return possible SDs
+
+GRIMMER_test <- function(mean, sd, n_obs, m_prec = NULL, sd_prec = NULL, n_items = 1) {
+
+  if (is.null(m_prec)) {
+    m_prec <- max(nchar(sub("^[0-9]*", "", mean)) - 1, 0)
+  }
+
+  if (is.null(sd_prec)) {
+    sd_prec <- max(nchar(sub("^[0-9]*", "", sd)) - 1, 0)
+  }
+
+  assert_count(m_prec)
+  assert_count(sd_prec)
+  assert_count(n_obs)
+  assert_count(n_items)
+  assert_number(mean)
+  assert_number(sd)
+
+  effective_n = n_obs * n_items
+
+  # Applies the GRIM test, and computes the possible mean.
+  sum <- mean * effective_n
+  realsum <- round(sum)
+  realmean <- realsum / effective_n
+
+  # Creates functions to round a number consistently up or down, when the last digit is 5
+  round_down <- function(number, decimals = 2) {
+    to_round <- number * 10^(decimals + 1) - floor(number * 10^(decimals)) * 10
+    number_rounded <- ifelse(to_round == 5,
+                             floor(number * 10^decimals) / 10^decimals,
+                             round(number, digits = decimals))
+    return(number_rounded)
+  }
+
+  round_up <- function(number, decimals = 2) {
+    to_round <- number * 10^(decimals + 1) - floor(number * 10^(decimals)) * 10
+    number_rounded <- ifelse(to_round == 5,
+                             ceiling(number * 10^decimals) / 10^decimals,
+                             round(number, digits = decimals))
+    return(number_rounded)
+  }
+
+  # Applies the GRIM test, to see whether the reconstituted mean is the same as the reported mean (with both down and up rounding)
+
+  consistent_down <- round_down(number = realmean, decimals = m_prec) == mean
+  consistent_up <- round_up(number = realmean, decimals = m_prec) == mean
+
+  if (!consistent_down & !consistent_up) {
+    warning("GRIM inconsistent - so GRIMMER test cannot be run. See ?GRIM_test")
+    return(FALSE)
+  }
+
+  # Computes the lower and upper bounds for the sd.
+
+  Lsigma <- ifelse(sd < 5 / (10^(sd_prec+1)), 0, sd - 5 / (10^(sd_prec+1)))
+  Usigma <- sd + 5 / (10^(sd_prec+1))
+
+  # Computes the lower and upper bounds for the sum of squares of items.
+
+  lower_bound <- (effective_n - 1) * Lsigma^2 + effective_n * realmean^2
+  upper_bound <- (effective_n - 1) * Usigma^2 + effective_n * realmean^2
+
+  # Checks that there is at least an integer between the lower and upperbound
+
+  if (ceiling(lower_bound) > floor(upper_bound)) {
+    return(FALSE)
+  }
+
+  # Takes a vector of all the integers between the lowerbound and upperbound
+
+  possible_integers <- ceiling(lower_bound):floor(upper_bound)
+
+  # Creates the predicted variance and sd
+
+  Predicted_Variance <- (possible_integers - effective_n * realmean^2) / (effective_n - 1)
+  Predicted_SD <- sqrt(Predicted_Variance)
+
+  # Computes whether one Predicted_SD matches the SD (trying to round both down and up)
+
+  Rounded_SD_down <- round_down(Predicted_SD, sd_prec)
+  Rounded_SD_up <- round_up(Predicted_SD, sd_prec)
+
+  Matches_SD <- Rounded_SD_down == sd | Rounded_SD_up == sd
+
+  if (!any(Matches_SD)) {
+    return(FALSE)
+  }
+
+  # Computes whether there is an integer of the correct oddness between the lower and upper bounds.
+  oddness <- realsum %% 2
+  Matches_Oddness <- possible_integers %% 2 == oddness
+  return(any(Matches_SD & Matches_Oddness))
+}

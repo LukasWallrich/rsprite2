@@ -6,6 +6,11 @@ test_that("GRIM works", {
   expect_equal(GRIM_test(5.2, 20, return_values = TRUE), c(5.2, 5.25, 5.15))
 })
 
+test_that("GRIMMER works", {
+  expect_true(GRIMMER_test(5.21, 1.6, 28))
+  expect_false(GRIMMER_test(3.44, 2.47, 18))
+})
+
 set.seed(1234)
 vec <- sample(c(1:6, 8:9), 25, replace = TRUE)
 vec <- .adjust_mean(1000, vec, c(1, 7, 7, 7, 7, 9), 3.5, 1, c(1:6, 8:9))
@@ -16,7 +21,7 @@ test_that("Adjusting mean works", {
 })
 
 restrictions <- list("2.33" = 1, "4" = 3, "4.67" = 0)
-parameters <- set_parameters(3.40, 1.15, 15, 1, 5,
+parameters <- set_parameters(3.29, 1.29, 15, 1, 5,
   m_prec = 2, n_items = 3,
   restrictions_exact = restrictions,
   restrictions_minimum = "range"

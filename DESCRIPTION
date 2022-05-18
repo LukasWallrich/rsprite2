@@ -1,12 +1,16 @@
 Package: rsprite2
 Title: Identify Distributions that Match Reported Sample Parameters (SPRITE)
-Version: 0.1.0
+Version: 0.1.0.9000
 Authors@R: 
-    person(given = "Lukas",
+    c(person(given = "Lukas",
            family = "Wallrich",
            role = c("aut", "cre"),
            email = "lukas.wallrich@gmail.com",
-           comment = c(ORCID = "0000-0003-2121-5177"))
+           comment = c(ORCID = "0000-0003-2121-5177")),
+    person(given = "Aurélien",
+           family = "Allard",
+           role = c("ctb"),
+           email = "aurelien.ab.allard@gmail.com"))
 Description: The SPRITE algorithm creates possible distributions of discrete responses
     based on reported sample parameters, such as mean, standard deviation and range 
     (Heathers et al., 2018, <doi:10.7287/peerj.preprints.26968v1>). This package implements it, 
@@ -17,7 +21,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Suggests: 
     ggplot2,
     testthat (>= 3.0.0),
