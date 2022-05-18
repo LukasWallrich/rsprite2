@@ -31,6 +31,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -43,18 +45,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">rsprite2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0.9000</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="reference/index.html">Reference</a>
 </li>
@@ -64,7 +60,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/LukasWallrich/rsprite2/">
+  <a href="https://github.com/LukasWallrich/rsprite2/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -81,31 +77,31 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="rsprite2---identify-distributions-that-match-reported-sample-parameters" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#rsprite2---identify-distributions-that-match-reported-sample-parameters" class="anchor"></a>rsprite2 - Identify Distributions that Match Reported Sample Parameters</h1></div>
+<div class="section level1">
+<div class="page-header"><h1 id="rsprite2---identify-distributions-that-match-reported-sample-parameters">rsprite2 - Identify Distributions that Match Reported Sample Parameters<a class="anchor" aria-label="anchor" href="#rsprite2---identify-distributions-that-match-reported-sample-parameters"></a>
+</h1></div>
 <!-- badges: start -->
-
 <p>This package creates possible distributions based on reported sample parameters, using the SPRITE algorithm. This can be used to check what the original sample might have looked like, and thus to understand the data generation process better. This can help with the identification of fabricated data or misreported parameters, but also with checking whether sample characteristics such as floor/ceiling effects might suggest that findings are spurious.</p>
-<p>For that, it implements the SPRITE algorithm proposed by <a href="https://peerj.com/preprints/26968.pdf">Heathers et al. (2018)</a>. Much of the code for is based on <a href="https://github.com/sTeamTraen/rSPRITE">Nick Brown’s rSPRITE shiny app</a>, with some extensions. If you are just interested in interactive use and do not need these extensions (see advanced usage below) that <a href="http://shiny.ieis.tue.nl/sprite/">Shiny online app</a> might be better for you</p>
-<div id="installation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h2>
+<p>For that, it implements the SPRITE algorithm proposed by <a href="https://peerj.com/preprints/26968.pdf" class="external-link">Heathers et al. (2018)</a>. Much of the code for is based on <a href="https://github.com/sTeamTraen/rSPRITE" class="external-link">Nick Brown’s rSPRITE shiny app</a>, with some extensions. If you are just interested in interactive use and do not need these extensions (see advanced usage below) that <a href="http://shiny.ieis.tue.nl/sprite/" class="external-link">Shiny online app</a> might be better for you.</p>
+<p>The package also includes dedicated functions to run the GRIM and GRIMMER tests. <code><a href="reference/GRIM_test.html">GRIM_test()</a></code> checks whether a reported mean based on integers is consistent with a given sample size, while <code><a href="reference/GRIMMER_test.html">GRIMMER_test()</a></code> checks whether a reported standard deviation is consistent with a reported mean and sample size. They can help catch impossible distributions and reporting errors without running any simulations.</p>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
 <p>rsprite2 can be installed from CRAN with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"rsprite2"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"rsprite2"</span><span class="op">)</span></code></pre></div>
 <p>Or you might want to install the development version from GitHub:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
-<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">'LukasWallrich/rsprite2'</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
+<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">'LukasWallrich/rsprite2'</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="simple-example" class="section level2">
-<h2 class="hasAnchor">
-<a href="#simple-example" class="anchor"></a>Simple example</h2>
+<div class="section level2">
+<h2 id="simple-example">Simple example<a class="anchor" aria-label="anchor" href="#simple-example"></a>
+</h2>
 <p>To create possible distributions, SPRITE needs the reported mean, standard deviation, sample size and range of values.</p>
 <p>For instance, what distribution of 20 responses on a 1 to 5 scale might result in a mean of 2.2 and a standard deviation of 1.3?</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://lukaswallrich.github.io/rsprite2/">rsprite2</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lukaswallrich.github.io/rsprite2/">rsprite2</a></span><span class="op">)</span>
 <span class="va">sprite_parameters</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/set_parameters.html">set_parameters</a></span><span class="op">(</span>mean <span class="op">=</span> <span class="fl">2.2</span>, sd <span class="op">=</span> <span class="fl">1.3</span>, n_obs <span class="op">=</span> <span class="fl">20</span>, min_val <span class="op">=</span> <span class="fl">1</span>, max_val <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>
 <span class="fu"><a href="reference/find_possible_distribution.html">find_possible_distribution</a></span><span class="op">(</span><span class="va">sprite_parameters</span><span class="op">)</span></code></pre></div>
 <p>If these means and standard deviations had been reported to two decimal places, they might be 2.20 and 1.33. NB: Given that trailing zeroes are ignored by R, you need to <em>specify the precision if mean or standard deviation ends in 0</em>.</p>
@@ -121,27 +117,27 @@
 <code class="sourceCode R"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/find_possible_distributions.html">find_possible_distributions</a></span><span class="op">(</span><span class="va">sprite_parameters</span>, <span class="fl">10</span><span class="op">)</span>
 <span class="fu"><a href="reference/plot_distributions.html">plot_distributions</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="advanced-features" class="section level2">
-<h2 class="hasAnchor">
-<a href="#advanced-features" class="anchor"></a>Advanced features</h2>
-<div id="multi-item-scales" class="section level3">
-<h3 class="hasAnchor">
-<a href="#multi-item-scales" class="anchor"></a>Multi-item scales</h3>
+<div class="section level2">
+<h2 id="advanced-features">Advanced features<a class="anchor" aria-label="anchor" href="#advanced-features"></a>
+</h2>
+<div class="section level3">
+<h3 id="multi-item-scales">Multi-item scales<a class="anchor" aria-label="anchor" href="#multi-item-scales"></a>
+</h3>
 <p>Often, several Likert-type items are averaged to measure a single construct (e.g., participants might be asked how happy, satisfied and fulfilled they are, with the results averaged into a measure of well-being). Possible resulting distribution can be explored by rsprite2 by specifying the <code>n_items</code> parameter.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sprite_parameters</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/set_parameters.html">set_parameters</a></span><span class="op">(</span>mean <span class="op">=</span> <span class="fl">1.95</span>, sd <span class="op">=</span> <span class="fl">1.55</span>, n_obs <span class="op">=</span> <span class="fl">20</span>, 
                                     min_val <span class="op">=</span> <span class="fl">1</span>, max_val <span class="op">=</span> <span class="fl">5</span>, n_items <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>
 <span class="fu"><a href="reference/find_possible_distribution.html">find_possible_distribution</a></span><span class="op">(</span><span class="va">sprite_parameters</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="restrictions" class="section level3">
-<h3 class="hasAnchor">
-<a href="#restrictions" class="anchor"></a>Restrictions</h3>
+<div class="section level3">
+<h3 id="restrictions">Restrictions<a class="anchor" aria-label="anchor" href="#restrictions"></a>
+</h3>
 <p>Sometimes, you might know how often certain values should appear in the distribution. Such restrictions need to be passed to the <code><a href="reference/set_parameters.html">set_parameters()</a></code> function as a named list. They can either specify the exact number of occurrences (<code>restrictions_exact</code>) or the minimum number of occurrences (<code>restrictions_minimum</code>) of a specific value.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sprite_parameters</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/set_parameters.html">set_parameters</a></span><span class="op">(</span>mean <span class="op">=</span> <span class="fl">1.95</span>, sd <span class="op">=</span> <span class="fl">1.55</span>, n_obs <span class="op">=</span> <span class="fl">20</span>, 
                                     min_val <span class="op">=</span> <span class="fl">1</span>, max_val <span class="op">=</span> <span class="fl">5</span>, n_items <span class="op">=</span> <span class="fl">3</span>,
-                                    restrictions_exact <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"3"</span><span class="op">=</span><span class="fl">0</span>, <span class="st">"3.67"</span> <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>,
-                                    restrictions_minimum <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"1"</span> <span class="op">=</span> <span class="fl">1</span>, <span class="st">"5"</span> <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span>
+                                    restrictions_exact <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"3"</span><span class="op">=</span><span class="fl">0</span>, <span class="st">"3.67"</span> <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>,
+                                    restrictions_minimum <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"1"</span> <span class="op">=</span> <span class="fl">1</span>, <span class="st">"5"</span> <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="reference/find_possible_distribution.html">find_possible_distribution</a></span><span class="op">(</span><span class="va">sprite_parameters</span><span class="op">)</span></code></pre></div>
 </div>
 </div>
@@ -150,48 +146,59 @@
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Download from CRAN at <br><a href="https://cloud.r-project.org/package=rsprite2">https://​cloud.r-project.org/​package=rsprite2</a>
-</li>
-<li>Browse source code at <br><a href="https://github.com/LukasWallrich/rsprite2/">https://​github.com/​LukasWallrich/​rsprite2/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/LukasWallrich/rsprite2/issues">https://​github.com/​LukasWallrich/​rsprite2/​issues</a>
-</li>
-</ul>
-</div>
-<div class="license">
-<h2>License</h2>
-<ul class="list-unstyled">
-<li><a href="LICENSE.html">Full license</a></li>
-<li><small><a href="https://opensource.org/licenses/mit-license.php">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a></small></li>
-</ul>
-</div>
-<div class="developers">
-<h2>Developers</h2>
-<ul class="list-unstyled">
-<li>Lukas Wallrich <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0003-2121-5177" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li><a href="https://cloud.r-project.org/package=rsprite2" class="external-link">View on CRAN</a></li>
+<li><a href="https://github.com/LukasWallrich/rsprite2/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/LukasWallrich/rsprite2/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
+<div class="license">
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/LukasWallrich/rsprite2/actions"><img src="https://github.com/LukasWallrich/rsprite2/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
-<li><a href="https://codecov.io/gh/LukasWallrich/rsprite2?branch=master"><img src="https://codecov.io/gh/LukasWallrich/rsprite2/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
-<li><a href="https://github.com/LukasWallrich/rsprite2"><img src="https://img.shields.io/badge/Build%20with-%E2%99%A5%20and%20R-blue" alt="R badge"></a></li>
+<li><a href="LICENSE.html">Full license</a></li>
+<li><small><a href="https://opensource.org/licenses/mit-license.php" class="external-link">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a></small></li>
 </ul>
 </div>
+
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
+<ul class="list-unstyled">
+<li><a href="authors.html#citation">Citing rsprite2</a></li>
+</ul>
 </div>
+
+<div class="developers">
+<h2 data-toc-skip>Developers</h2>
+<ul class="list-unstyled">
+<li>Lukas Wallrich <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0003-2121-5177" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li><a href="authors.html">More about authors...</a></li>
+</ul>
+</div>
+
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/LukasWallrich/rsprite2/actions" class="external-link"><img src="https://github.com/LukasWallrich/rsprite2/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://codecov.io/gh/LukasWallrich/rsprite2?branch=master" class="external-link"><img src="https://codecov.io/gh/LukasWallrich/rsprite2/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
+<li><a href="https://github.com/LukasWallrich/rsprite2" class="external-link"><img src="https://img.shields.io/badge/Build%20with-%E2%99%A5%20and%20R-blue" alt="R badge"></a></li>
+</ul>
+</div>
+
+  </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by Lukas Wallrich.</p>
+  <p></p>
+<p>Developed by Lukas Wallrich.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer>
@@ -199,6 +206,8 @@
 
   
 
+
+  
 
   </body>
 </html>

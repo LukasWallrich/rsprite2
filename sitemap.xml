@@ -1,24 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://lukaswallrich.github.io/rsprite2//index.html</loc>
+    <loc>https://lukaswallrich.github.io/rsprite2/404.html</loc>
   </url>
   <url>
-    <loc>https://lukaswallrich.github.io/rsprite2//reference/GRIM_test.html</loc>
+    <loc>https://lukaswallrich.github.io/rsprite2/LICENSE-text.html</loc>
   </url>
   <url>
-    <loc>https://lukaswallrich.github.io/rsprite2//reference/find_possible_distribution.html</loc>
+    <loc>https://lukaswallrich.github.io/rsprite2/LICENSE.html</loc>
   </url>
   <url>
-    <loc>https://lukaswallrich.github.io/rsprite2//reference/find_possible_distributions.html</loc>
+    <loc>https://lukaswallrich.github.io/rsprite2/authors.html</loc>
   </url>
   <url>
-    <loc>https://lukaswallrich.github.io/rsprite2//reference/plot_distributions.html</loc>
+    <loc>https://lukaswallrich.github.io/rsprite2/index.html</loc>
   </url>
   <url>
-    <loc>https://lukaswallrich.github.io/rsprite2//reference/rsprite2-package.html</loc>
+    <loc>https://lukaswallrich.github.io/rsprite2/news/index.html</loc>
   </url>
   <url>
-    <loc>https://lukaswallrich.github.io/rsprite2//reference/set_parameters.html</loc>
+    <loc>https://lukaswallrich.github.io/rsprite2/reference/GRIMMER_test.html</loc>
+  </url>
+  <url>
+    <loc>https://lukaswallrich.github.io/rsprite2/reference/GRIM_test.html</loc>
+  </url>
+  <url>
+    <loc>https://lukaswallrich.github.io/rsprite2/reference/find_possible_distribution.html</loc>
+  </url>
+  <url>
+    <loc>https://lukaswallrich.github.io/rsprite2/reference/find_possible_distributions.html</loc>
+  </url>
+  <url>
+    <loc>https://lukaswallrich.github.io/rsprite2/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>https://lukaswallrich.github.io/rsprite2/reference/plot_distributions.html</loc>
+  </url>
+  <url>
+    <loc>https://lukaswallrich.github.io/rsprite2/reference/rsprite2-package.html</loc>
+  </url>
+  <url>
+    <loc>https://lukaswallrich.github.io/rsprite2/reference/set_parameters.html</loc>
   </url>
 </urlset>
