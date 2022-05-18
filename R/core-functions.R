@@ -285,7 +285,7 @@ find_possible_distributions <- function(parameters, n_distributions = 10, seed =
 #'
 #' @param parameters List of parameters, see \code{\link{set_parameters}}
 #' @param seed An integer to use as the seed for random number generation. Set this in scripts to ensure reproducibility.
-#' @param values_only Should only values or a more informative list be returned. See details.
+#' @param values_only Should only values or a more informative list be returned. See Value section.
 #'
 #' @return Unless `values_only = TRUE`, a list with:
 #' \item{outcome}{success or failure - character}
