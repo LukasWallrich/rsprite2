@@ -14,3 +14,10 @@
 0 errors | 0 warnings | 1 note
 
 * This is a new release.
+
+## Notes on resubmission
+
+* This is a resubmission. There were two comments by maintainers:
+- I fixed a typo in DESCRIPTION
+- I ensured that the installation of other packages is optional, is only offered in interactive mode, and does not affect any examples or tests.
+Thank you for the feedback.
