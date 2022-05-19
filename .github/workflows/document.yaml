@@ -37,7 +37,7 @@ jobs:
         if: success()
         uses: peter-evans/repository-dispatch@v1
         with:
-          token: ${{ secrets.GITHUB_workflow_PAT }}
+          token: ${{ secrets.workflow_PAT }}
           repository: ${{ github.repository }}
           event-type: trigger-CMD-checks
           client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
