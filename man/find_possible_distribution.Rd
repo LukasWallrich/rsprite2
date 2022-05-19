@@ -11,7 +11,7 @@ find_possible_distribution(parameters, seed = NULL, values_only = FALSE)
 
 \item{seed}{An integer to use as the seed for random number generation. Set this in scripts to ensure reproducibility.}
 
-\item{values_only}{Should only values or a more informative list be returned. See details.}
+\item{values_only}{Should only values or a more informative list be returned. See Value section.}
 }
 \value{
 Unless \code{values_only = TRUE}, a list with:
