@@ -744,8 +744,12 @@ GRIMMER_test <- function(mean, sd, n_obs, m_prec = NULL, sd_prec = NULL, n_items
   realsum <- round(sum)
   realmean <- realsum / effective_n
 
-  #Checks whether SD is within possible range
+  #Checks whether mean and SD are within possible range
   if (!is.null(min_val) & !is.null(max_val)) {
+    if (mean < min_val | min > max_val) {
+      warning("The mean must be between the scale minimum and maximum")
+      return(FALSE)
+    }
     sd_limits <- .sd_limits(n_obs, mean, min_val, max_val, sd_prec, n_items)
     if (sd < sd_limits[1] | sd > sd_limits[1]) {
       warning("Given the scale minimum and maximum, the standard deviation has to be between ", sd_limits[1], " and ", sd_limits[2], ".")
