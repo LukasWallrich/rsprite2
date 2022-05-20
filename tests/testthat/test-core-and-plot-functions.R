@@ -3,12 +3,18 @@ test_that("GRIM works", {
   expect_true(GRIM_test(5.18, 14, n_items = 2))
   expect_warning(closest <- GRIM_test(5.19, 28, return_values = TRUE))
   expect_equal(closest, 5.18)
-  expect_equal(GRIM_test(5.2, 20, return_values = TRUE), c(5.2, 5.25, 5.15))
+  expect_warning(expect_equal(GRIM_test(5.2, 20, return_values = TRUE), c(5.2, 5.25, 5.15)))
 })
 
 test_that("GRIMMER works", {
   expect_true(GRIMMER_test(5.21, 1.6, 28))
   expect_false(GRIMMER_test(3.44, 2.47, 18))
+})
+
+test_that(".sd_limits works", {
+  expect_equal(c(.45, 3.03), .sd_limits(n_obs = 5, mean = 4.2, min_val = 1, max_val = 7, sd_prec = 2))
+  expect_equal(c(.27, 3.03), .sd_limits(n_obs = 5, mean = 4.2, min_val = 1, max_val = 7, sd_prec = 2, n_items = 2))
+  expect_equal(c(0, 0), .sd_limits(n_obs = 100, mean = 1, min_val = 1, max_val = 7))
 })
 
 set.seed(1234)

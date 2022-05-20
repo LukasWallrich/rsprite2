@@ -108,12 +108,11 @@ set_parameters <- function(mean, sd, n_obs, min_val, max_val,
     names(restrictions_minimum) <- c(min_val, max_val)
   }
 
-  poss_values <- numeric()
+  poss_values <- max_val
   for (i in seq_len(n_items)) {
-    poss_values <- c(poss_values, min_val:max_val + (1 / n_items) * (i - 1))
+    poss_values <- c(poss_values, min_val:(max_val-1) + (1 / n_items) * (i - 1))
   }
-
-  poss_values <- sort(poss_values[poss_values <= max_val])
+  poss_values <- sort(poss_values)
 
   poss_values_chr <- round(poss_values, 2)
 
@@ -664,36 +663,61 @@ GRIM_test <- function(mean, n_obs, m_prec = NULL, n_items = 1, return_values = F
 }
 
 # Determine minimum and maximum SDs for given scale ranges, N, and mean.
-.sd_limits <- function(n_obs, mean, min_val, max_val, sd_prec, n_items = 1) {
+.sd_limits <- function(n_obs, mean, min_val, max_val, sd_prec = NULL, n_items = 1) {
+
+  if (is.null(sd_prec)) {
+    sd_prec <- max(nchar(sub("^[0-9]*", "", mean)) - 1, 0)
+  }
 
   result <- c(-Inf, Inf)
 
   aMax <- min_val                                # "aMax" means "value of a to produce the max SD"
   aMin <- floor(mean*n_items)/n_items
-  bMax <- max(max_val, min_val + 1, aMin + 1)   # sanity check (just scaleMax would normally be ok)
+  bMax <- max(max_val, min_val + 1, aMin + 1)   # sanity check (just max_val would normally be ok)
   bMin <- aMin + 1/n_items
   total <- round(mean * n_obs * n_items)/n_items
 
+  poss_values <- max_val
+  for (i in seq_len(n_items)) {
+    poss_values <- c(poss_values, min_val:(max_val-1) + (1 / n_items) * (i - 1))
+  }
+  poss_values <- sort(poss_values)
+
   for (abm in list(c(aMin, bMin, 1), c(aMax, bMax, 2))) {
+
     a <- abm[1]
     b <- abm[2]
     m <- abm[3]
+
+    if (m == 1 & mean %in% round(poss_values, sd_prec)) {
+      result[m] <- 0
+
+    } else if (mean %in% c(min_val, max_val)) {
+      result[m] <- 0
+    } else {
 
     k <- round((total - (n_obs * b)) / (a - b))
     k <- min(max(k, 1), n_obs - 1)               # ensure there is at least one of each of two numbers
     vec <- c(rep(a, k), rep(b, n_obs - k))
     diff <- sum(vec) - total
     if ((diff < 0) && (k > 1)) {
-      vec <- c(rep(a, k - 1), abs(diff), rep(b, n_obs - k))
+      vec <- c(rep(a, k - 1), a + abs(diff), rep(b, n_obs - k))
     }
     else if ((diff > 0) && ((n_obs - k) > 1)) {
-      vec <- c(rep(a, k), diff, rep(b, n_obs - k - 1))
+      vec <- c(rep(a, k), b - diff, rep(b, n_obs - k - 1))
     }
+
+    if (round(mean(vec), sd_prec) != round(mean, sd_prec) | !all(floor(vec*10e9) %in% floor(poss_values*10e9))) {
+      stop("Error in calculating range of possible standard deviations")
+    }
+
     result[m] <- round(sd(vec), sd_prec)
+    }
   }
 
   return(result)
 }
+
 
 #' GRIMMER test for standard deviation
 #'
