@@ -4,7 +4,16 @@
 \alias{GRIMMER_test}
 \title{GRIMMER test for standard deviation}
 \usage{
-GRIMMER_test(mean, sd, n_obs, m_prec = NULL, sd_prec = NULL, n_items = 1)
+GRIMMER_test(
+  mean,
+  sd,
+  n_obs,
+  m_prec = NULL,
+  sd_prec = NULL,
+  n_items = 1,
+  min_val = NULL,
+  max_val = NULL
+)
 }
 \arguments{
 \item{mean}{The mean of the distribution}
@@ -21,6 +30,10 @@ reported standard deviation ends in 0.}
 
 \item{n_items}{Number of items in scale, if distribution represents scale averages.
 Defaults to 1, which represents any single-item measure.}
+
+\item{min_val}{(Optional) Scale minimum. If provided alongside max_val, the function checks whether the SD is consistent with that range.}
+
+\item{max_val}{(Optional) Scale maximum.}
 }
 \value{
 Logical TRUE/FALSE indicating whether given standard deviation is possible, given the other parameters

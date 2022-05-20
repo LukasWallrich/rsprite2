@@ -703,6 +703,8 @@ GRIM_test <- function(mean, n_obs, m_prec = NULL, n_items = 1, return_values = F
 #' developed by [Allard (2018)](https://aurelienallard.netlify.app/post/anaytic-grimmer-possibility-standard-deviations/) is used.
 #'
 #' @inheritParams set_parameters
+#' @param min_val (Optional) Scale minimum. If provided alongside max_val, the function checks whether the SD is consistent with that range.
+#' @param max_val (Optional) Scale maximum.
 #'
 #' @return Logical TRUE/FALSE indicating whether given standard deviation is possible, given the other parameters
 #' @export
@@ -718,7 +720,7 @@ GRIM_test <- function(mean, n_obs, m_prec = NULL, n_items = 1, return_values = F
 # ToDos:
 # - add return_values argument to return possible SDs
 
-GRIMMER_test <- function(mean, sd, n_obs, m_prec = NULL, sd_prec = NULL, n_items = 1) {
+GRIMMER_test <- function(mean, sd, n_obs, m_prec = NULL, sd_prec = NULL, n_items = 1, min_val = NULL, max_val = NULL) {
 
   if (is.null(m_prec)) {
     m_prec <- max(nchar(sub("^[0-9]*", "", mean)) - 1, 0)
@@ -742,6 +744,14 @@ GRIMMER_test <- function(mean, sd, n_obs, m_prec = NULL, sd_prec = NULL, n_items
   realsum <- round(sum)
   realmean <- realsum / effective_n
 
+  #Checks whether SD is within possible range
+  if (!is.null(min_val) & !is.null(max_val)) {
+    sd_limits <- .sd_limits(n_obs, mean, min_val, max_val, sd_prec, n_items)
+    if (sd < sd_limits[1] | sd > sd_limits[1]) {
+      warning("Given the scale minimum and maximum, the standard deviation has to be between ", sd_limits[1], " and ", sd_limits[2], ".")
+      return(FALSE)
+    }
+  }
   # Creates functions to round a number consistently up or down, when the last digit is 5
   round_down <- function(number, decimals = 2) {
     to_round <- number * 10^(decimals + 1) - floor(number * 10^(decimals)) * 10

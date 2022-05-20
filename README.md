@@ -3,14 +3,14 @@
 
 <!-- badges: start -->
   [![R-CMD-check](https://github.com/LukasWallrich/rsprite2/workflows/R-CMD-check/badge.svg)](https://github.com/LukasWallrich/rsprite2/actions)
-  [![Codecov test coverage](https://codecov.io/gh/LukasWallrich/rsprite2/branch/master/graph/badge.svg)](https://codecov.io/gh/LukasWallrich/rsprite2?branch=master)
+  [![Codecov test coverage](https://codecov.io/gh/LukasWallrich/rsprite2/branch/master/graph/badge.svg)](https://app.codecov.io/gh/LukasWallrich/rsprite2?branch=master)
   [![R badge](https://img.shields.io/badge/Build%20with-♥%20and%20R-blue)](https://github.com/LukasWallrich/rsprite2)
 [![R-CMD-check](https://github.com/LukasWallrich/rsprite2/workflows/R-CMD-check/badge.svg)](https://github.com/LukasWallrich/rsprite2/actions)
 <!-- badges: end -->
 
 This package creates possible distributions based on reported sample parameters, using the SPRITE algorithm. This can be used to check what the original sample might have looked like, and thus to understand the data generation process better. This can help with the identification of fabricated data or misreported parameters, but also with checking whether sample characteristics such as floor/ceiling effects might suggest that findings are spurious.
 
-For that, it implements the SPRITE algorithm proposed by [Heathers et al. (2018)](https://peerj.com/preprints/26968.pdf). Much of the code for is based on [Nick Brown's rSPRITE shiny app](https://github.com/sTeamTraen/rSPRITE), with some extensions. If you are just interested in interactive use and do not need these extensions (see advanced usage below) that [Shiny online app](http://shiny.ieis.tue.nl/sprite/) might be better for you.
+For that, it implements the SPRITE algorithm proposed by [Heathers et al. (2018)](https://peerj.com/preprints/26968/). Much of the code for is based on [Nick Brown's rSPRITE shiny app](https://github.com/sTeamTraen/rSPRITE), with some extensions. If you are just interested in interactive use and do not need these extensions (see advanced usage below) that [Shiny online app](http://shiny.ieis.tue.nl/sprite/) might be better for you.
 
 The package also includes dedicated functions to run the GRIM and GRIMMER tests. `GRIM_test()` checks whether a reported mean based on integers is consistent with a given sample size, while `GRIMMER_test()` checks whether a reported standard deviation is consistent with a reported mean and sample size. They can help catch impossible distributions and reporting errors without running any simulations.
 
