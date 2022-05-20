@@ -92,7 +92,7 @@ set_parameters <- function(mean, sd, n_obs, min_val, max_val,
   }
   }
 
-  sd_limits <- .sd_limits(n_obs, mean, min_val, max_val, sd_prec, n_items = 1)
+  sd_limits <- .sd_limits(n_obs, mean, min_val, max_val, sd_prec, n_items)
 
   if (!(sd >= sd_limits[1] & sd <= sd_limits[2])) {
     stop("The standard deviation is outside the possible range, given the other parameters.
