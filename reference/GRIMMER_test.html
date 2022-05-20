@@ -59,7 +59,16 @@ developed by <a href="https://aurelienallard.netlify.app/post/anaytic-grimmer-po
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">GRIMMER_test</span><span class="op">(</span><span class="va">mean</span>, <span class="va">sd</span>, <span class="va">n_obs</span>, m_prec <span class="op">=</span> <span class="cn">NULL</span>, sd_prec <span class="op">=</span> <span class="cn">NULL</span>, n_items <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">GRIMMER_test</span><span class="op">(</span>
+  <span class="va">mean</span>,
+  <span class="va">sd</span>,
+  <span class="va">n_obs</span>,
+  m_prec <span class="op">=</span> <span class="cn">NULL</span>,
+  sd_prec <span class="op">=</span> <span class="cn">NULL</span>,
+  n_items <span class="op">=</span> <span class="fl">1</span>,
+  min_val <span class="op">=</span> <span class="cn">NULL</span>,
+  max_val <span class="op">=</span> <span class="cn">NULL</span>
+<span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -79,6 +88,10 @@ reported standard deviation ends in 0.</p></dd>
 <dt>n_items</dt>
 <dd><p>Number of items in scale, if distribution represents scale averages.
 Defaults to 1, which represents any single-item measure.</p></dd>
+<dt>min_val</dt>
+<dd><p>(Optional) Scale minimum. If provided alongside max_val, the function checks whether the SD is consistent with that range.</p></dd>
+<dt>max_val</dt>
+<dd><p>(Optional) Scale maximum.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>

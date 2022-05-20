@@ -82,7 +82,7 @@
 </h1></div>
 <!-- badges: start -->
 <p>This package creates possible distributions based on reported sample parameters, using the SPRITE algorithm. This can be used to check what the original sample might have looked like, and thus to understand the data generation process better. This can help with the identification of fabricated data or misreported parameters, but also with checking whether sample characteristics such as floor/ceiling effects might suggest that findings are spurious.</p>
-<p>For that, it implements the SPRITE algorithm proposed by <a href="https://peerj.com/preprints/26968.pdf" class="external-link">Heathers et al. (2018)</a>. Much of the code for is based on <a href="https://github.com/sTeamTraen/rSPRITE" class="external-link">Nick Brown’s rSPRITE shiny app</a>, with some extensions. If you are just interested in interactive use and do not need these extensions (see advanced usage below) that <a href="http://shiny.ieis.tue.nl/sprite/" class="external-link">Shiny online app</a> might be better for you.</p>
+<p>For that, it implements the SPRITE algorithm proposed by <a href="https://peerj.com/preprints/26968/" class="external-link">Heathers et al. (2018)</a>. Much of the code for is based on <a href="https://github.com/sTeamTraen/rSPRITE" class="external-link">Nick Brown’s rSPRITE shiny app</a>, with some extensions. If you are just interested in interactive use and do not need these extensions (see advanced usage below) that <a href="http://shiny.ieis.tue.nl/sprite/" class="external-link">Shiny online app</a> might be better for you.</p>
 <p>The package also includes dedicated functions to run the GRIM and GRIMMER tests. <code><a href="reference/GRIM_test.html">GRIM_test()</a></code> checks whether a reported mean based on integers is consistent with a given sample size, while <code><a href="reference/GRIMMER_test.html">GRIMMER_test()</a></code> checks whether a reported standard deviation is consistent with a reported mean and sample size. They can help catch impossible distributions and reporting errors without running any simulations.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -182,7 +182,7 @@
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://github.com/LukasWallrich/rsprite2/actions" class="external-link"><img src="https://github.com/LukasWallrich/rsprite2/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
-<li><a href="https://codecov.io/gh/LukasWallrich/rsprite2?branch=master" class="external-link"><img src="https://codecov.io/gh/LukasWallrich/rsprite2/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
+<li><a href="https://app.codecov.io/gh/LukasWallrich/rsprite2?branch=master" class="external-link"><img src="https://codecov.io/gh/LukasWallrich/rsprite2/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
 <li><a href="https://github.com/LukasWallrich/rsprite2" class="external-link"><img src="https://img.shields.io/badge/Build%20with-%E2%99%A5%20and%20R-blue" alt="R badge"></a></li>
 <li><a href="https://github.com/LukasWallrich/rsprite2/actions" class="external-link"><img src="https://github.com/LukasWallrich/rsprite2/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
 </ul>
