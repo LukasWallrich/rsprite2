@@ -689,31 +689,27 @@ GRIM_test <- function(mean, n_obs, m_prec = NULL, n_items = 1, return_values = F
     b <- abm[2]
     m <- abm[3]
 
-    if (m == 1 & mean %in% round(poss_values, sd_prec)) {
-      result[m] <- 0
-
-    } else if (mean %in% c(min_val, max_val)) {
-      result[m] <- 0
-    } else {
 
     k <- round((total - (n_obs * b)) / (a - b))
     k <- min(max(k, 1), n_obs - 1)               # ensure there is at least one of each of two numbers
     vec <- c(rep(a, k), rep(b, n_obs - k))
     diff <- sum(vec) - total
-    if ((diff < 0) && (k > 1)) {
+
+
+    if ((diff < 0)) {
       vec <- c(rep(a, k - 1), a + abs(diff), rep(b, n_obs - k))
     }
-    else if ((diff > 0) && ((n_obs - k) > 1)) {
+    else if ((diff > 0)) {
       vec <- c(rep(a, k), b - diff, rep(b, n_obs - k - 1))
     }
 
     if (round(mean(vec), sd_prec) != round(mean, sd_prec) | !all(floor(vec*10e9) %in% floor(poss_values*10e9))) {
       stop("Error in calculating range of possible standard deviations")
+      browser()
     }
 
     result[m] <- round(sd(vec), sd_prec)
     }
-  }
 
   return(result)
 }
@@ -746,6 +742,10 @@ GRIM_test <- function(mean, n_obs, m_prec = NULL, n_items = 1, return_values = F
 
 GRIMMER_test <- function(mean, sd, n_obs, m_prec = NULL, sd_prec = NULL, n_items = 1, min_val = NULL, max_val = NULL) {
 
+  if (n_items != 1) {
+    warning("Support for scales with more than 1 item is under development - do not trust the results!")
+  }
+
   if (is.null(m_prec)) {
     m_prec <- max(nchar(sub("^[0-9]*", "", mean)) - 1, 0)
   }
@@ -770,12 +770,12 @@ GRIMMER_test <- function(mean, sd, n_obs, m_prec = NULL, sd_prec = NULL, n_items
 
   #Checks whether mean and SD are within possible range
   if (!is.null(min_val) & !is.null(max_val)) {
-    if (mean < min_val | min > max_val) {
+    if (mean < min_val | mean > max_val) {
       warning("The mean must be between the scale minimum and maximum")
       return(FALSE)
     }
     sd_limits <- .sd_limits(n_obs, mean, min_val, max_val, sd_prec, n_items)
-    if (sd < sd_limits[1] | sd > sd_limits[1]) {
+    if (sd < sd_limits[1] | sd > sd_limits[2]) {
       warning("Given the scale minimum and maximum, the standard deviation has to be between ", sd_limits[1], " and ", sd_limits[2], ".")
       return(FALSE)
     }
