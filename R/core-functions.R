@@ -695,7 +695,6 @@ GRIM_test <- function(mean, n_obs, m_prec = NULL, n_items = 1, return_values = F
     vec <- c(rep(a, k), rep(b, n_obs - k))
     diff <- sum(vec) - total
 
-
     if ((diff < 0)) {
       vec <- c(rep(a, k - 1), a + abs(diff), rep(b, n_obs - k))
     }
@@ -705,7 +704,6 @@ GRIM_test <- function(mean, n_obs, m_prec = NULL, n_items = 1, return_values = F
 
     if (round(mean(vec), sd_prec) != round(mean, sd_prec) | !all(floor(vec*10e9) %in% floor(poss_values*10e9))) {
       stop("Error in calculating range of possible standard deviations")
-      browser()
     }
 
     result[m] <- round(sd(vec), sd_prec)
@@ -768,15 +766,10 @@ GRIMMER_test <- function(mean, sd, n_obs, m_prec = NULL, sd_prec = NULL, n_items
   realsum <- round(sum)
   realmean <- realsum / effective_n
 
-  #Checks whether mean and SD are within possible range
+  #Checks whether mean is within possible range
   if (!is.null(min_val) & !is.null(max_val)) {
     if (mean < min_val | mean > max_val) {
       warning("The mean must be between the scale minimum and maximum")
-      return(FALSE)
-    }
-    sd_limits <- .sd_limits(n_obs, mean, min_val, max_val, sd_prec, n_items)
-    if (sd < sd_limits[1] | sd > sd_limits[2]) {
-      warning("Given the scale minimum and maximum, the standard deviation has to be between ", sd_limits[1], " and ", sd_limits[2], ".")
       return(FALSE)
     }
   }
@@ -846,5 +839,19 @@ GRIMMER_test <- function(mean, sd, n_obs, m_prec = NULL, sd_prec = NULL, n_items
   # Computes whether there is an integer of the correct oddness between the lower and upper bounds.
   oddness <- realsum %% 2
   Matches_Oddness <- possible_integers %% 2 == oddness
-  return(any(Matches_SD & Matches_Oddness))
+
+  if(!any(Matches_SD & Matches_Oddness)) {
+    return(FALSE)
+  }
+
+  #Checks whether SD is within possible range
+  if (!is.null(min_val) & !is.null(max_val)) {
+     sd_limits <- .sd_limits(n_obs, mean, min_val, max_val, sd_prec, n_items)
+     if (sd < sd_limits[1] | sd > sd_limits[2]) {
+       warning("Given the scale minimum and maximum, the standard deviation has to be between ", sd_limits[1], " and ", sd_limits[2], ".")
+       return(FALSE)
+     }
+  }
+  return(TRUE)
+
 }
