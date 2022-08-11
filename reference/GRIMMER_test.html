@@ -20,7 +20,7 @@ developed by Allard (2018) is used."><meta property="og:image" content="https://
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">rsprite2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.0.9000</span>
       </span>
     </div>
 
@@ -59,43 +59,60 @@ developed by <a href="https://aurelienallard.netlify.app/post/anaytic-grimmer-po
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">GRIMMER_test</span><span class="op">(</span>
-  <span class="va">mean</span>,
-  <span class="va">sd</span>,
-  <span class="va">n_obs</span>,
-  m_prec <span class="op">=</span> <span class="cn">NULL</span>,
-  sd_prec <span class="op">=</span> <span class="cn">NULL</span>,
-  n_items <span class="op">=</span> <span class="fl">1</span>,
-  min_val <span class="op">=</span> <span class="cn">NULL</span>,
-  max_val <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">GRIMMER_test</span><span class="op">(</span></span>
+<span>  <span class="va">mean</span>,</span>
+<span>  <span class="va">sd</span>,</span>
+<span>  <span class="va">n_obs</span>,</span>
+<span>  m_prec <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  sd_prec <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  n_items <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  min_val <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  max_val <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>mean</dt>
 <dd><p>The mean of the distribution</p></dd>
+
+
 <dt>sd</dt>
 <dd><p>The standard deviation of the distribution</p></dd>
+
+
 <dt>n_obs</dt>
 <dd><p>The number of observations (sample size)</p></dd>
+
+
 <dt>m_prec</dt>
 <dd><p>The precision of the mean, as number of digits after the decimal point.
 If not provided, taken based on the significant digits of <code>mean</code> - so only needed if reported mean ends in 0</p></dd>
+
+
 <dt>sd_prec</dt>
 <dd><p>The precision of the standard deviation, again only needed if
 reported standard deviation ends in 0.</p></dd>
+
+
 <dt>n_items</dt>
 <dd><p>Number of items in scale, if distribution represents scale averages.
 Defaults to 1, which represents any single-item measure.</p></dd>
+
+
 <dt>min_val</dt>
 <dd><p>(Optional) Scale minimum. If provided alongside max_val, the function checks whether the SD is consistent with that range.</p></dd>
+
+
 <dt>max_val</dt>
 <dd><p>(Optional) Scale maximum.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Logical TRUE/FALSE indicating whether given standard deviation is possible, given the other parameters</p>
+    
+
+<p>Logical TRUE/FALSE indicating whether given standard deviation is possible, given the other parameters</p>
     </div>
     <div id="references">
     <h2>References</h2>
@@ -106,11 +123,11 @@ Defaults to 1, which represents any single-item measure.</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># A sample of 18 integers with mean 3.44 cannot have an SD of 2.47. This is shown by</span></span>
-<span class="r-in"><span class="fu">GRIMMER_test</span><span class="op">(</span>mean <span class="op">=</span> <span class="fl">3.44</span>, sd <span class="op">=</span> <span class="fl">2.47</span>, n_obs <span class="op">=</span> <span class="fl">18</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># A sample of 18 integers with mean 3.44 cannot have an SD of 2.47. This is shown by</span></span></span>
+<span class="r-in"><span><span class="fu">GRIMMER_test</span><span class="op">(</span>mean <span class="op">=</span> <span class="fl">3.44</span>, sd <span class="op">=</span> <span class="fl">2.47</span>, n_obs <span class="op">=</span> <span class="fl">18</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
-<span class="r-in"></span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -125,7 +142,7 @@ Defaults to 1, which represents any single-item measure.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

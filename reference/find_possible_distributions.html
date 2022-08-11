@@ -19,7 +19,7 @@ created with set_parameters"><meta property="og:image" content="https://lukaswal
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">rsprite2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.0.9000</span>
       </span>
     </div>
 
@@ -57,50 +57,66 @@ created with <code><a href="set_parameters.html">set_parameters</a></code></p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">find_possible_distributions</span><span class="op">(</span>
-  <span class="va">parameters</span>,
-  n_distributions <span class="op">=</span> <span class="fl">10</span>,
-  seed <span class="op">=</span> <span class="cn">NULL</span>,
-  return_tibble <span class="op">=</span> <span class="cn">TRUE</span>,
-  return_failures <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">find_possible_distributions</span><span class="op">(</span></span>
+<span>  <span class="va">parameters</span>,</span>
+<span>  n_distributions <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  seed <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  return_tibble <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  return_failures <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>parameters</dt>
 <dd><p>List of parameters, see <code><a href="set_parameters.html">set_parameters</a></code></p></dd>
+
+
 <dt>n_distributions</dt>
 <dd><p>The target number of distributions to return.</p></dd>
+
+
 <dt>seed</dt>
 <dd><p>An integer to use as the seed for random number generation. Set this in scripts to ensure reproducibility.</p></dd>
+
+
 <dt>return_tibble</dt>
 <dd><p>Should a tibble, rather than a list, be returned? Requires the <code>tibble</code>-package, ignored if that package is not available.</p></dd>
+
+
 <dt>return_failures</dt>
 <dd><p>Should distributions that failed to produce the desired SD be returned? Defaults to false</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A tibble or list (depending on the <code>return_tibble</code> argument) with:</p>
+    
+
+<p>A tibble or list (depending on the <code>return_tibble</code> argument) with:</p>
 <dl><dt>outcome</dt>
 <dd><p>success or failure - character</p></dd>
+
 <dt>distribution</dt>
 <dd><p>The distribution that was found (if success) / that had the closest variance (if failure) - numeric</p></dd>
+
 <dt>mean</dt>
 <dd><p>The exact mean of the distribution - numeric</p></dd>
+
 <dt>sd</dt>
 <dd><p>The SD of the distribution that was found (success) / that came closest (failure) - numeric</p></dd>
+
 <dt>iterations</dt>
 <dd><p>The number of iterations required to achieve the specified SD - numeric - the first time this distribution was found</p></dd>
+
 </dl></div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="va">sprite_parameters</span> <span class="op">&lt;-</span> <span class="fu"><a href="set_parameters.html">set_parameters</a></span><span class="op">(</span>mean <span class="op">=</span> <span class="fl">2.2</span>, sd <span class="op">=</span> <span class="fl">1.3</span>, n_obs <span class="op">=</span> <span class="fl">20</span>,</span>
-<span class="r-in">                                    min_val <span class="op">=</span> <span class="fl">1</span>, max_val <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu">find_possible_distributions</span><span class="op">(</span><span class="va">sprite_parameters</span>, <span class="fl">5</span>, seed <span class="op">=</span> <span class="fl">1234</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">sprite_parameters</span> <span class="op">&lt;-</span> <span class="fu"><a href="set_parameters.html">set_parameters</a></span><span class="op">(</span>mean <span class="op">=</span> <span class="fl">2.2</span>, sd <span class="op">=</span> <span class="fl">1.3</span>, n_obs <span class="op">=</span> <span class="fl">20</span>,</span></span>
+<span class="r-in"><span>                                    min_val <span class="op">=</span> <span class="fl">1</span>, max_val <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">find_possible_distributions</span><span class="op">(</span><span class="va">sprite_parameters</span>, <span class="fl">5</span>, seed <span class="op">=</span> <span class="fl">1234</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 6</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      id outcome distribution  mean    sd iterations</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
@@ -109,7 +125,7 @@ created with <code><a href="set_parameters.html">set_parameters</a></code></p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     3 success <span style="color: #949494;">&lt;dbl [20]&gt;</span>    2.2   1.32          6</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     4 success <span style="color: #949494;">&lt;dbl [20]&gt;</span>    2.25  1.33          1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     5 success <span style="color: #949494;">&lt;dbl [20]&gt;</span>    2.25  1.33          2</span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -124,7 +140,7 @@ created with <code><a href="set_parameters.html">set_parameters</a></code></p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

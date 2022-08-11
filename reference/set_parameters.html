@@ -20,7 +20,7 @@ the distributions (e.g. find_possible_distribution)"><meta property="og:image" c
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">rsprite2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.0.9000</span>
       </span>
     </div>
 
@@ -59,54 +59,77 @@ the distributions (e.g. <code><a href="find_possible_distribution.html">find_pos
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">set_parameters</span><span class="op">(</span>
-  <span class="va">mean</span>,
-  <span class="va">sd</span>,
-  <span class="va">n_obs</span>,
-  <span class="va">min_val</span>,
-  <span class="va">max_val</span>,
-  m_prec <span class="op">=</span> <span class="cn">NULL</span>,
-  sd_prec <span class="op">=</span> <span class="cn">NULL</span>,
-  n_items <span class="op">=</span> <span class="fl">1</span>,
-  restrictions_exact <span class="op">=</span> <span class="cn">NULL</span>,
-  restrictions_minimum <span class="op">=</span> <span class="cn">NULL</span>,
-  dont_test <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">set_parameters</span><span class="op">(</span></span>
+<span>  <span class="va">mean</span>,</span>
+<span>  <span class="va">sd</span>,</span>
+<span>  <span class="va">n_obs</span>,</span>
+<span>  <span class="va">min_val</span>,</span>
+<span>  <span class="va">max_val</span>,</span>
+<span>  m_prec <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  sd_prec <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  n_items <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  restrictions_exact <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  restrictions_minimum <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  dont_test <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>mean</dt>
 <dd><p>The mean of the distribution</p></dd>
+
+
 <dt>sd</dt>
 <dd><p>The standard deviation of the distribution</p></dd>
+
+
 <dt>n_obs</dt>
 <dd><p>The number of observations (sample size)</p></dd>
+
+
 <dt>min_val</dt>
 <dd><p>The minimum value</p></dd>
+
+
 <dt>max_val</dt>
 <dd><p>The maximum value</p></dd>
+
+
 <dt>m_prec</dt>
 <dd><p>The precision of the mean, as number of digits after the decimal point.
 If not provided, taken based on the significant digits of <code>mean</code> - so only needed if reported mean ends in 0</p></dd>
+
+
 <dt>sd_prec</dt>
 <dd><p>The precision of the standard deviation, again only needed if
 reported standard deviation ends in 0.</p></dd>
+
+
 <dt>n_items</dt>
 <dd><p>Number of items in scale, if distribution represents scale averages.
 Defaults to 1, which represents any single-item measure.</p></dd>
+
+
 <dt>restrictions_exact</dt>
 <dd><p>Restrictions on the exact frequency of specific responses, see Details</p></dd>
+
+
 <dt>restrictions_minimum</dt>
 <dd><p>Restrictions on the minimum frequency of specific responses, see Details</p></dd>
+
+
 <dt>dont_test</dt>
 <dd><p>By default, this function tests whether the mean is possible, given the sample size (GRIM-test) and whether
 the standard deviation is possible, given mean and sample size (GRIMMER test), and fails otherwise. If you want to override this,
 and run SPRITE anyway, you can set this to TRUE.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A named list of parameters, pre-processed for further rsprite2 functions.</p>
+    
+
+<p>A named list of parameters, pre-processed for further rsprite2 functions.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -123,12 +146,12 @@ when <code>n_items = 3</code> you could specify <code>list("1.67" = 0)</code>.</
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span> <span class="co">#To get reproducible results</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Simple case</span></span>
-<span class="r-in"><span class="va">sprite_parameters</span> <span class="op">&lt;-</span> <span class="fu">set_parameters</span><span class="op">(</span>mean <span class="op">=</span> <span class="fl">2.2</span>, sd <span class="op">=</span> <span class="fl">1.3</span>, n_obs <span class="op">=</span> <span class="fl">20</span>, min_val <span class="op">=</span> <span class="fl">1</span>, max_val <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="find_possible_distribution.html">find_possible_distribution</a></span><span class="op">(</span><span class="va">sprite_parameters</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span> <span class="co">#To get reproducible results</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Simple case</span></span></span>
+<span class="r-in"><span><span class="va">sprite_parameters</span> <span class="op">&lt;-</span> <span class="fu">set_parameters</span><span class="op">(</span>mean <span class="op">=</span> <span class="fl">2.2</span>, sd <span class="op">=</span> <span class="fl">1.3</span>, n_obs <span class="op">=</span> <span class="fl">20</span>, min_val <span class="op">=</span> <span class="fl">1</span>, max_val <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="find_possible_distribution.html">find_possible_distribution</a></span><span class="op">(</span><span class="va">sprite_parameters</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $outcome</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "success"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -144,14 +167,14 @@ when <code>n_items = 3</code> you could specify <code>list("1.67" = 0)</code>.</
 <span class="r-out co"><span class="r-pr">#&gt;</span> $iterations</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># With restrictions</span></span>
-<span class="r-in"><span class="va">sprite_parameters</span> <span class="op">&lt;-</span> <span class="fu">set_parameters</span><span class="op">(</span>mean <span class="op">=</span> <span class="fl">1.95</span>, sd <span class="op">=</span> <span class="fl">1.55</span>, n_obs <span class="op">=</span> <span class="fl">20</span>,</span>
-<span class="r-in">                                    min_val <span class="op">=</span> <span class="fl">1</span>, max_val <span class="op">=</span> <span class="fl">5</span>, n_items <span class="op">=</span> <span class="fl">3</span>,</span>
-<span class="r-in">                                    restrictions_exact <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"3"</span><span class="op">=</span><span class="fl">0</span>, <span class="st">"3.67"</span> <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>,</span>
-<span class="r-in">                                    restrictions_minimum <span class="op">=</span> <span class="st">"range"</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># With restrictions</span></span></span>
+<span class="r-in"><span><span class="va">sprite_parameters</span> <span class="op">&lt;-</span> <span class="fu">set_parameters</span><span class="op">(</span>mean <span class="op">=</span> <span class="fl">1.95</span>, sd <span class="op">=</span> <span class="fl">1.55</span>, n_obs <span class="op">=</span> <span class="fl">20</span>,</span></span>
+<span class="r-in"><span>                                    min_val <span class="op">=</span> <span class="fl">1</span>, max_val <span class="op">=</span> <span class="fl">5</span>, n_items <span class="op">=</span> <span class="fl">3</span>,</span></span>
+<span class="r-in"><span>                                    restrictions_exact <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"3"</span><span class="op">=</span><span class="fl">0</span>, <span class="st">"3.67"</span> <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                    restrictions_minimum <span class="op">=</span> <span class="st">"range"</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Support for scales with more than 1 item is under development - do not trust the results!</span>
-<span class="r-in"><span class="fu"><a href="find_possible_distribution.html">find_possible_distribution</a></span><span class="op">(</span><span class="va">sprite_parameters</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="find_possible_distribution.html">find_possible_distribution</a></span><span class="op">(</span><span class="va">sprite_parameters</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $outcome</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "success"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -169,7 +192,7 @@ when <code>n_items = 3</code> you could specify <code>list("1.67" = 0)</code>.</
 <span class="r-out co"><span class="r-pr">#&gt;</span> $iterations</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 90</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -184,7 +207,7 @@ when <code>n_items = 3</code> you could specify <code>list("1.67" = 0)</code>.</
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>
