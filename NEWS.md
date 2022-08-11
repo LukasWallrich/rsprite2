@@ -1,3 +1,5 @@
+# rsprite2 (development version)
+
 # rsprite2 0.2.0
 
 * Added GRIMMER test (`GRIMMER_test()`) to catch impossible standard deviations, using the [algorithm developed by Aurélien Allard](https://aurelienallard.netlify.app/post/anaytic-grimmer-possibility-standard-deviations/)

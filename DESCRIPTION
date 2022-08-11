@@ -1,6 +1,6 @@
 Package: rsprite2
 Title: Identify Distributions that Match Reported Sample Parameters (SPRITE)
-Version: 0.2.0
+Version: 0.2.0.9000
 Authors@R: 
     c(person(given = "Lukas",
            family = "Wallrich",
