@@ -43,6 +43,7 @@ This function tests whether a given standard deviation (with a specific precisio
 can result from a sample of a given size based on integer responses to one or more
 items. The test was first proposed by \href{https://peerj.com/preprints/2400/}{Anaya (2016)}; here, the algorithm
 developed by \href{https://aurelienallard.netlify.app/post/anaytic-grimmer-possibility-standard-deviations/}{Allard (2018)} is used.
+Note that it is presently \emph{only implemented for single-item measures}.
 }
 \examples{
 # A sample of 18 integers with mean 3.44 cannot have an SD of 2.47. This is shown by
