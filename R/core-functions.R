@@ -86,9 +86,12 @@ set_parameters <- function(mean, sd, n_obs, min_val, max_val,
       }
       }
 
+  if (n_items == 1) {
+    #GRIMMER test only implemented for single-item measures.
   if (!GRIMMER_test(mean, sd, n_obs, m_prec, sd_prec, n_items)) {
     stop("The standard deviation is not consistent with this mean and number of observations (fails GRIMMER test).
          For details, see ?GRIMMER_test.")
+  }
   }
   }
 
@@ -719,6 +722,7 @@ GRIM_test <- function(mean, n_obs, m_prec = NULL, n_items = 1, return_values = F
 #' can result from a sample of a given size based on integer responses to one or more
 #' items. The test was first proposed by [Anaya (2016)](https://peerj.com/preprints/2400/); here, the algorithm
 #' developed by [Allard (2018)](https://aurelienallard.netlify.app/post/anaytic-grimmer-possibility-standard-deviations/) is used.
+#' Note that it is presently *only implemented for single-item measures*.
 #'
 #' @inheritParams set_parameters
 #' @param min_val (Optional) Scale minimum. If provided alongside max_val, the function checks whether the SD is consistent with that range.
@@ -741,7 +745,7 @@ GRIM_test <- function(mean, n_obs, m_prec = NULL, n_items = 1, return_values = F
 GRIMMER_test <- function(mean, sd, n_obs, m_prec = NULL, sd_prec = NULL, n_items = 1, min_val = NULL, max_val = NULL) {
 
   if (n_items != 1) {
-    warning("Support for scales with more than 1 item is under development - do not trust the results!")
+    stop("Support for scales with more than 1 item is not yet implemented.")
   }
 
   if (is.null(m_prec)) {
