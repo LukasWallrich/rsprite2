@@ -12,3 +12,4 @@
 # Known limitations / tasks for future development
 
 * `set_parameters` does not consider the restrictions provided when running the GRIM test. Doing so would help to catch some impossible restrictions at this stage.
+* `GRIMMER_test` does not support multi-item scales (unlike `GRIM_test`). This requires an extension to Aurélien Allard's algorithm that we hope to implement soon.
