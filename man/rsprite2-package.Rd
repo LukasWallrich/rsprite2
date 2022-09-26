@@ -8,7 +8,7 @@
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-The SPRITE algorithm creates possible distributions of discrete responses based on reported sample parameters, such as mean, standard deviation and range (Heathers et al., 2018, \doi{10.7287/peerj.preprints.26968v1}). This package implements it, drawing heavily on the code for Nick Brown's 'rSPRITE' Shiny app \url{http://shiny.ieis.tue.nl/sprite/}. In addition, it supports the modeling of distributions based on multi-item (Likert-type) scales and the use of restrictions on the frequency of particular responses.
+The SPRITE algorithm creates possible distributions of discrete responses based on reported sample parameters, such as mean, standard deviation and range (Heathers et al., 2018, \doi{10.7287/peerj.preprints.26968v1}). This package implements it, drawing heavily on the code for Nick Brown's 'rSPRITE' Shiny app \url{https://shiny.ieis.tue.nl/sprite/}. In addition, it supports the modeling of distributions based on multi-item (Likert-type) scales and the use of restrictions on the frequency of particular responses.
 }
 \seealso{
 Useful links:
