@@ -13,3 +13,7 @@
 ## Downstream dependencies
 
 There are no downstream dependencies
+
+## Resubmission
+
+Apologies for the unchanged previous resubmission. I now actually changed the link to the Shiny app in the DESCRIPTION to https as requested. Note that this sometimes results in a certificate warning, but the link is stable and works from any browser I have tested it with.
