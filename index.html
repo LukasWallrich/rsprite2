@@ -21,7 +21,7 @@
 <meta property="og:description" content="The SPRITE algorithm creates possible distributions of discrete responses
     based on reported sample parameters, such as mean, standard deviation and range 
     (Heathers et al., 2018, &lt;doi:10.7287/peerj.preprints.26968v1&gt;). This package implements it, 
-    drawing heavily on the code for Nick Browns rSPRITE' Shiny app &lt;http://shiny.ieis.tue.nl/sprite/&gt;. 
+    drawing heavily on the code for Nick Browns rSPRITE' Shiny app &lt;https://shiny.ieis.tue.nl/sprite/&gt;. 
     In addition, it supports the modeling of distributions based on multi-item (Likert-type) 
     scales and the use of restrictions on the frequency of particular responses.">
 <meta property="og:image" content="https://lukaswallrich.github.io/rsprite2/logo.png">
@@ -82,7 +82,7 @@
 </h1></div>
 <!-- badges: start -->
 <p>This package creates possible distributions based on reported sample parameters, using the SPRITE algorithm. This can be used to check what the original sample might have looked like, and thus to understand the data generation process better. This can help with the identification of fabricated data or misreported parameters, but also with checking whether sample characteristics such as floor/ceiling effects might suggest that findings are spurious.</p>
-<p>For that, it implements the SPRITE algorithm proposed by <a href="https://peerj.com/preprints/26968/" class="external-link">Heathers et al. (2018)</a>. Much of the code for is based on <a href="https://github.com/sTeamTraen/rSPRITE" class="external-link">Nick Brown’s rSPRITE shiny app</a>, with some extensions. If you are just interested in interactive use and do not need these extensions (see advanced usage below) that <a href="http://shiny.ieis.tue.nl/sprite/" class="external-link">Shiny online app</a> might be better for you.</p>
+<p>For that, it implements the SPRITE algorithm proposed by <a href="https://peerj.com/preprints/26968/" class="external-link">Heathers et al. (2018)</a>. Much of the code for is based on <a href="https://github.com/sTeamTraen/rSPRITE" class="external-link">Nick Brown’s rSPRITE shiny app</a>, with some extensions. If you are just interested in interactive use and do not need these extensions (see advanced usage below) that Shiny online app (see <a href="https://shiny.ieis.tue.nl/sprite/" class="external-link uri">https://shiny.ieis.tue.nl/sprite/</a>) might be better for you.</p>
 <p>The package also includes dedicated functions to run the GRIM and GRIMMER tests. <code><a href="reference/GRIM_test.html">GRIM_test()</a></code> checks whether a reported mean based on integers is consistent with a given sample size, while <code><a href="reference/GRIMMER_test.html">GRIMMER_test()</a></code> checks whether a reported standard deviation is consistent with a reported mean and sample size. They can help catch impossible distributions and reporting errors without running any simulations.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
