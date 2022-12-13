@@ -1,4 +1,4 @@
-# rsprite2 - Identify Distributions that Match Reported Sample Parameters <img src='man/figures/logo.png' align="right" height="120" />
+# rsprite2 - Identify Distributions that Match Reported Sample Parameters <img src='man/figures/logo.png' align="right" style="float:right; height:120px;" />
 
 <!-- badges: start -->
   [![R-CMD-check](https://github.com/LukasWallrich/rsprite2/workflows/R-CMD-check/badge.svg)](https://github.com/LukasWallrich/rsprite2/actions)
