@@ -28,7 +28,10 @@
 
 plot_distributions <- function(distributions, plot_type = c("auto", "histogram", "ecdf", "density"),
                                max_plots = 100, show_ids = FALSE, facets = NULL) {
-  .check_req_packages(c("tidyr", "ggplot2"))
+  .check_req_packages(c("tidyr", "ggplot2", "rlang"))
+
+  # To avoid depending on rlang, this cannot be imported
+  .data <- rlang::.data
 
   distribution <- id <- NULL #To avoid "no visible binding" CMD check note
 
@@ -78,7 +81,7 @@ plot_distributions <- function(distributions, plot_type = c("auto", "histogram",
 
   assert_logical(facets)
 
-  p <- ggplot2::ggplot(distributions_long, ggplot2::aes_string(x = "distribution")) + ggplot2::theme_light() +
+  p <- ggplot2::ggplot(distributions_long, ggplot2::aes(x = .data$distribution)) + ggplot2::theme_light() +
     ggplot2::scale_x_continuous(limits = c(scale_min, scale_max))
 
 
@@ -88,12 +91,12 @@ plot_distributions <- function(distributions, plot_type = c("auto", "histogram",
   }
 
   if (plot_type == "density") {
-    p <- p + ggplot2::geom_density(ggplot2::aes_string(color = "id"), alpha = 5 / (5 + log(n_distributions)), show.legend = show_ids) +
+    p <- p + ggplot2::geom_density(ggplot2::aes(color = .data$id), alpha = 5 / (5 + log(n_distributions)), show.legend = show_ids) +
              ggplot2::labs(x = "Response", color = "id")
   }
 
   if (plot_type == "ecdf") {
-    p <- p + ggplot2::stat_ecdf(ggplot2::aes_string(color = "id"), alpha = 5 / (5 + log(n_distributions)), show.legend = show_ids) +
+    p <- p + ggplot2::stat_ecdf(ggplot2::aes(color = .data$id), alpha = 5 / (5 + log(n_distributions)), show.legend = show_ids) +
              ggplot2::labs(x = "Response", color = "id", y = "Cumulative share") +
              ggplot2::scale_y_continuous(labels = scales::percent)
   }

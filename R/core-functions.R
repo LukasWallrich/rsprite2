@@ -86,12 +86,9 @@ set_parameters <- function(mean, sd, n_obs, min_val, max_val,
       }
       }
 
-  if (n_items == 1) {
-    #GRIMMER test only implemented for single-item measures.
   if (!GRIMMER_test(mean, sd, n_obs, m_prec, sd_prec, n_items)) {
     stop("The standard deviation is not consistent with this mean and number of observations (fails GRIMMER test).
          For details, see ?GRIMMER_test.")
-  }
   }
   }
 
@@ -721,8 +718,8 @@ GRIM_test <- function(mean, n_obs, m_prec = NULL, n_items = 1, return_values = F
 #' This function tests whether a given standard deviation (with a specific precision)
 #' can result from a sample of a given size based on integer responses to one or more
 #' items. The test was first proposed by [Anaya (2016)](https://peerj.com/preprints/2400/); here, the algorithm
-#' developed by [Allard (2018)](https://aurelienallard.netlify.app/post/anaytic-grimmer-possibility-standard-deviations/) is used.
-#' Note that it is presently *only implemented for single-item measures*.
+#' developed by [Allard (2018)](https://aurelienallard.netlify.app/post/anaytic-grimmer-possibility-standard-deviations/) is used,
+#' extended by Aurélien Allard to support multi-item scales.
 #'
 #' @inheritParams set_parameters
 #' @param min_val (Optional) Scale minimum. If provided alongside max_val, the function checks whether the SD is consistent with that range.
@@ -743,11 +740,6 @@ GRIM_test <- function(mean, n_obs, m_prec = NULL, n_items = 1, return_values = F
 # - add return_values argument to return possible SDs
 
 GRIMMER_test <- function(mean, sd, n_obs, m_prec = NULL, sd_prec = NULL, n_items = 1, min_val = NULL, max_val = NULL) {
-
-  if (n_items != 1) {
-    stop("Support for scales with more than 1 item is not yet implemented.")
-  }
-
   if (is.null(m_prec)) {
     m_prec <- max(nchar(sub("^[0-9]*", "", mean)) - 1, 0)
   }
@@ -770,10 +762,15 @@ GRIMMER_test <- function(mean, sd, n_obs, m_prec = NULL, sd_prec = NULL, n_items
   realsum <- round(sum)
   realmean <- realsum / effective_n
 
-  #Checks whether mean is within possible range
+  #Checks whether mean and SD are within possible range
   if (!is.null(min_val) & !is.null(max_val)) {
     if (mean < min_val | mean > max_val) {
       warning("The mean must be between the scale minimum and maximum")
+      return(FALSE)
+    }
+    sd_limits <- .sd_limits(n_obs, mean, min_val, max_val, sd_prec, n_items)
+    if (sd < sd_limits[1] | sd > sd_limits[2]) {
+      warning("Given the scale minimum and maximum, the standard deviation has to be between ", sd_limits[1], " and ", sd_limits[2], ".")
       return(FALSE)
     }
   }
@@ -811,8 +808,8 @@ GRIMMER_test <- function(mean, sd, n_obs, m_prec = NULL, sd_prec = NULL, n_items
 
   # Computes the lower and upper bounds for the sum of squares of items.
 
-  lower_bound <- (effective_n - 1) * Lsigma^2 + effective_n * realmean^2
-  upper_bound <- (effective_n - 1) * Usigma^2 + effective_n * realmean^2
+  lower_bound <- ((n_obs - 1) * Lsigma^2 + n_obs * realmean^2)*n_items^2
+  upper_bound <- ((n_obs - 1) * Usigma^2 + n_obs * realmean^2)*n_items^2
 
   # Checks that there is at least an integer between the lower and upperbound
 
@@ -826,7 +823,7 @@ GRIMMER_test <- function(mean, sd, n_obs, m_prec = NULL, sd_prec = NULL, n_items
 
   # Creates the predicted variance and sd
 
-  Predicted_Variance <- (possible_integers - effective_n * realmean^2) / (effective_n - 1)
+  Predicted_Variance <- (possible_integers/n_items^2 - n_obs * realmean^2) / (n_obs - 1)
   Predicted_SD <- sqrt(Predicted_Variance)
 
   # Computes whether one Predicted_SD matches the SD (trying to round both down and up)
@@ -843,19 +840,8 @@ GRIMMER_test <- function(mean, sd, n_obs, m_prec = NULL, sd_prec = NULL, n_items
   # Computes whether there is an integer of the correct oddness between the lower and upper bounds.
   oddness <- realsum %% 2
   Matches_Oddness <- possible_integers %% 2 == oddness
+  return(any(Matches_SD & Matches_Oddness))
 
-  if(!any(Matches_SD & Matches_Oddness)) {
-    return(FALSE)
-  }
-
-  #Checks whether SD is within possible range
-  if (!is.null(min_val) & !is.null(max_val)) {
-     sd_limits <- .sd_limits(n_obs, mean, min_val, max_val, sd_prec, n_items)
-     if (sd < sd_limits[1] | sd > sd_limits[2]) {
-       warning("Given the scale minimum and maximum, the standard deviation has to be between ", sd_limits[1], " and ", sd_limits[2], ".")
-       return(FALSE)
-     }
-  }
   return(TRUE)
-
 }
+

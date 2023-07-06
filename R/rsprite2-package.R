@@ -16,7 +16,6 @@ rSprite.maxDupLoops <- 20
 rSprite.dust <- 1e-12 #To account for rounding errors
 rSprite.huge <- 1e15 #Should this not be Inf?
 
-
 #' @keywords internal
 "_PACKAGE"
 

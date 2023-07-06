@@ -1,6 +1,6 @@
 Package: rsprite2
 Title: Identify Distributions that Match Reported Sample Parameters (SPRITE)
-Version: 0.2.0
+Version: 0.2.1
 Authors@R: 
     c(person(given = "Lukas",
            family = "Wallrich",
@@ -21,12 +21,13 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 Suggests: 
     ggplot2,
     testthat (>= 3.0.0),
     tibble,
     tidyr,
+    rlang,
     scales
 Config/testthat/edition: 3
 URL: https://lukaswallrich.github.io/rsprite2/

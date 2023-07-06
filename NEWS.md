@@ -1,3 +1,7 @@
+# rsprite2 0.2.1
+
+* `GRIMMER_test()` now supports multi-item scales, as Aurélien Allard kindly extended his algorithm
+
 # rsprite2 0.2.0
 
 * Added GRIMMER test (`GRIMMER_test()`) to catch impossible standard deviations, using the [algorithm developed by Aurélien Allard](https://aurelienallard.netlify.app/post/anaytic-grimmer-possibility-standard-deviations/)
@@ -12,4 +16,3 @@
 # rsprite2 0.0.0 Known limitations / tasks for future development
 
 * `set_parameters` does not consider the restrictions provided when running the GRIM test. Doing so would help to catch some impossible restrictions at this stage.
-* `GRIMMER_test` does not support multi-item scales (unlike `GRIM_test`). This requires an extension to Aurélien Allard's algorithm that we hope to implement soon.
