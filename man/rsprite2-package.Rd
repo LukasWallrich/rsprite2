@@ -24,6 +24,7 @@ Useful links:
 Other contributors:
 \itemize{
   \item Aurélien Allard \email{aurelien.ab.allard@gmail.com} [contributor]
+  \item Lukas Jung \email{jung-lukas@gmx.net} [contributor]
 }
 
 }
