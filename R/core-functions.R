@@ -103,7 +103,7 @@ set_parameters <- function(mean, sd, n_obs, min_val, max_val,
     stop("The mean is outside the possible range, which is impossible - please check inputs.")
     }
 
-  if (identical(restrictions_minimum, "range")) {
+  if (isTRUE(checkmate::check_choice(restrictions_minimum, "range"))) {
     restrictions_minimum <- list(1, 1)
     names(restrictions_minimum) <- c(min_val, max_val)
   }
