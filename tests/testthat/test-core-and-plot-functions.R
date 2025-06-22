@@ -27,6 +27,15 @@ test_that("Adjusting mean works", {
   expect_equal(sum(vec == 7), 0)
 })
 
+test_that("Example set_parameters() run works", {
+  expect_no_error(
+    set_parameters(mean = 1.95, sd = 1.55, n_obs = 20,
+                   min_val = 1, max_val = 5, n_items = 3,
+                   restrictions_exact = list("3"=0, "3.67" = 2),
+                   restrictions_minimum = list("1" = 1, "5" = 1))
+  )
+})
+
 restrictions <- list("2.33" = 1, "4" = 3, "4.67" = 0)
 parameters <- set_parameters(3.29, 1.29, 15, 1, 5,
   m_prec = 2, n_items = 3,
