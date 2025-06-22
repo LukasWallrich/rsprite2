@@ -669,12 +669,19 @@ GRIM_test <- function(mean, n_obs, m_prec = NULL, n_items = 1, return_values = F
     sd_prec <- max(nchar(sub("^[0-9]*", "", mean)) - 1, 0)
   }
 
+  if (min_val == max_val) {
+    # If the scale has no range, SD must be 0
+    # Man must be min_val, not checked here to keep function focused.
+    return(c(0, 0))
+  }
+
+
   result <- c(-Inf, Inf)
 
   aMax <- min_val                                # "aMax" means "value of a to produce the max SD"
   aMin <- floor(mean*n_items)/n_items
-  bMax <- max(max_val, min_val + 1, aMin + 1)   # sanity check (just max_val would normally be ok)
-  bMin <- aMin + 1/n_items
+  bMax <- max_val   # Earlier bug allowed this to exceed max_val
+  bMin <- min(aMin + 1/n_items, max_val)
   total <- round(mean * n_obs * n_items)/n_items
 
   poss_values <- max_val
@@ -689,17 +696,23 @@ GRIM_test <- function(mean, n_obs, m_prec = NULL, n_items = 1, return_values = F
     b <- abm[2]
     m <- abm[3]
 
+    # Adjust a and b to be within min_val and max_val
+    a <- min(max(a, min_val), max_val)
+    b <- min(max(b, min_val), max_val)
 
-    k <- round((total - (n_obs * b)) / (a - b))
-    k <- min(max(k, 1), n_obs - 1)               # ensure there is at least one of each of two numbers
-    vec <- c(rep(a, k), rep(b, n_obs - k))
-    diff <- sum(vec) - total
+    if (a == b) {
+      vec <- rep(a, n_obs)
+    } else {
+      k <- round((total - (n_obs * b)) / (a - b))
+      k <- min(max(k, 1), n_obs - 1)
+      vec <- c(rep(a, k), rep(b, n_obs - k))
+      diff <- sum(vec) - total
 
-    if ((diff < 0)) {
-      vec <- c(rep(a, k - 1), a + abs(diff), rep(b, n_obs - k))
-    }
-    else if ((diff > 0)) {
-      vec <- c(rep(a, k), b - diff, rep(b, n_obs - k - 1))
+      if ((diff < 0)) {
+        vec <- c(rep(a, k - 1), a + abs(diff), rep(b, n_obs - k))
+      } else if ((diff > 0)) {
+        vec <- c(rep(a, k), b - diff, rep(b, n_obs - k - 1))
+      }
     }
 
     if (round(mean(vec), sd_prec) != round(mean, sd_prec) | !all(floor(vec*10e9) %in% floor(poss_values*10e9))) {
@@ -707,7 +720,7 @@ GRIM_test <- function(mean, n_obs, m_prec = NULL, n_items = 1, return_values = F
     }
 
     result[m] <- round(sd(vec), sd_prec)
-    }
+  }
 
   return(result)
 }

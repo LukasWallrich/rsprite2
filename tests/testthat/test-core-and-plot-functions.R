@@ -15,6 +15,7 @@ test_that(".sd_limits works", {
   expect_equal(c(.45, 3.03), .sd_limits(n_obs = 5, mean = 4.2, min_val = 1, max_val = 7, sd_prec = 2))
   expect_equal(c(.27, 3.03), .sd_limits(n_obs = 5, mean = 4.2, min_val = 1, max_val = 7, sd_prec = 2, n_items = 2))
   expect_equal(c(0, 0), .sd_limits(n_obs = 100, mean = 1, min_val = 1, max_val = 7))
+  expect_equal(c(0, 0), .sd_limits(n_obs = 100, mean = 7, min_val = 1, max_val = 7))
 })
 
 set.seed(1234)

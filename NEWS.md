@@ -1,3 +1,8 @@
+# rsprite2 0.2.1.9000
+
+* Bug fixed in the boundary test, ensuring that SD limits are calculated correctly even when the mean is on (or very near) the scale limits.
+
+
 # rsprite2 0.2.1
 
 * `GRIMMER_test()` now supports multi-item scales, as Aurélien Allard kindly extended his algorithm
