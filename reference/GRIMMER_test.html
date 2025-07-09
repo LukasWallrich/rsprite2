@@ -69,7 +69,9 @@ extended by Aurélien Allard to support multi-item scales.</p>
 <span>  sd_prec <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  n_items <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  min_val <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  max_val <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  max_val <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  return_values <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  return_list <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -111,24 +113,55 @@ Defaults to 1, which represents any single-item measure.</p></dd>
 <dt id="arg-max-val">max_val<a class="anchor" aria-label="anchor" href="#arg-max-val"></a></dt>
 <dd><p>(Optional) Scale maximum.</p></dd>
 
+
+<dt id="arg-return-values">return_values<a class="anchor" aria-label="anchor" href="#arg-return-values"></a></dt>
+<dd><p>A logical value. <em>Ignored if <code>return_list = TRUE</code></em>.
+If <code>FALSE</code> (the default), the function returns a simple <code>TRUE</code> or <code>FALSE</code>. If <code>TRUE</code>, it returns a numeric
+vector of all possible unrounded standard deviations that are consistent - unless the precision/sample size ratio
+allows for all standard deviations within the possible range to be GRIMMER-consistent. In that case, a message
+is shown and an empty numeric vector is returned.</p></dd>
+
+
+<dt id="arg-return-list">return_list<a class="anchor" aria-label="anchor" href="#arg-return-list"></a></dt>
+<dd><p>A logical value. If <code>FALSE</code> (the default), the function's
+return type is determined by <code>return_values</code>. If <code>TRUE</code>, the function
+instead returns a list containing a logical <code>passed</code> flag
+and a numeric <code>values</code> vector.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Logical TRUE/FALSE indicating whether given standard deviation is possible, given the other parameters</p>
+    <p>The return type depends on the arguments. By default, a logical scalar
+(<code>TRUE</code> or <code>FALSE</code>). If <code>return_values = TRUE</code>, a numeric vector is returned.
+If <code>return_list = TRUE</code>, a list is returned. An inconsistent result will yield
+<code>FALSE</code>, an empty numeric vector, or a list with <code>passed = FALSE</code>.</p>
     </div>
     <div id="references">
     <h2>References</h2>
     <p>Anaya J (2016).
 “The GRIMMER test: A method for testing the validity of reported measures of variability.”
-<em>PeerJ Preprints</em>, <b>4</b>, e2400v1.</p>
+<em>PeerJ Preprints</em>, <b>4</b>, e2400v1.
+
+Allard A (2018).
+“Analytic-GRIMMER: A New Way of Testing the Possibility of Standard Deviations.”
+<a href="https://aurelienallard.netlify.app/post/anaytic-grimmer-possibility-standard-deviations/" class="external-link">https://aurelienallard.netlify.app/post/anaytic-grimmer-possibility-standard-deviations/</a>.
+Accessed: 2025-07-09.</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># A sample of 18 integers with mean 3.44 cannot have an SD of 2.47. This is shown by</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># A sample of 18 integers with mean 3.44 cannot have an SD of 2.47.</span></span></span>
 <span class="r-in"><span><span class="fu">GRIMMER_test</span><span class="op">(</span>mean <span class="op">=</span> <span class="fl">3.44</span>, sd <span class="op">=</span> <span class="fl">2.47</span>, n_obs <span class="op">=</span> <span class="fl">18</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Get a detailed list containing both the logical result and any possible values</span></span></span>
+<span class="r-in"><span><span class="fu">GRIMMER_test</span><span class="op">(</span>mean <span class="op">=</span> <span class="fl">3.5</span>, sd <span class="op">=</span> <span class="fl">1.21</span>, n_obs <span class="op">=</span> <span class="fl">10</span>, return_list <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $passed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $values</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numeric(0)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
