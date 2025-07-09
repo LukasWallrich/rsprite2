@@ -1,6 +1,6 @@
 Package: rsprite2
 Title: Identify Distributions that Match Reported Sample Parameters (SPRITE)
-Version: 0.2.1.9001
+Version: 0.2.1.9002
 Authors@R: 
     c(person(given = "Lukas",
            family = "Wallrich",
@@ -25,7 +25,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 Suggests: 
     ggplot2,
     testthat (>= 3.0.0),
