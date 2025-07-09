@@ -927,7 +927,7 @@ boundary_test <- function(sd, n_obs, mean, min_val, max_val,
   }
 
   # --- Perform the boundary test ---
-  (sd >= sd_range[1]) && (sd <= sd_range[2])
+  (sd >= (sd_range[1] - rSprite.dust)) && (sd <= (sd_range[2] + rSprite.dust))
 
 }
 
