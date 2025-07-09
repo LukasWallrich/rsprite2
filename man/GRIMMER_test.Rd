@@ -12,7 +12,9 @@ GRIMMER_test(
   sd_prec = NULL,
   n_items = 1,
   min_val = NULL,
-  max_val = NULL
+  max_val = NULL,
+  return_values = FALSE,
+  return_list = FALSE
 )
 }
 \arguments{
@@ -34,9 +36,23 @@ Defaults to 1, which represents any single-item measure.}
 \item{min_val}{(Optional) Scale minimum. If provided alongside max_val, the function checks whether the SD is consistent with that range.}
 
 \item{max_val}{(Optional) Scale maximum.}
+
+\item{return_values}{A logical value. \emph{Ignored if \code{return_list = TRUE}}.
+If \code{FALSE} (the default), the function returns a simple \code{TRUE} or \code{FALSE}. If \code{TRUE}, it returns a numeric
+vector of all possible unrounded standard deviations that are consistent - unless the precision/sample size ratio
+allows for all standard deviations within the possible range to be GRIMMER-consistent. In that case, a message
+is shown and an empty numeric vector is returned.}
+
+\item{return_list}{A logical value. If \code{FALSE} (the default), the function's
+return type is determined by \code{return_values}. If \code{TRUE}, the function
+instead returns a list containing a logical \code{passed} flag
+and a numeric \code{values} vector.}
 }
 \value{
-Logical TRUE/FALSE indicating whether given standard deviation is possible, given the other parameters
+The return type depends on the arguments. By default, a logical scalar
+(\code{TRUE} or \code{FALSE}). If \code{return_values = TRUE}, a numeric vector is returned.
+If \code{return_list = TRUE}, a list is returned. An inconsistent result will yield
+\code{FALSE}, an empty numeric vector, or a list with \code{passed = FALSE}.
 }
 \description{
 This function tests whether a given standard deviation (with a specific precision)
@@ -46,11 +62,14 @@ developed by \href{https://aurelienallard.netlify.app/post/anaytic-grimmer-possi
 extended by Aurélien Allard to support multi-item scales.
 }
 \examples{
-# A sample of 18 integers with mean 3.44 cannot have an SD of 2.47. This is shown by
+# A sample of 18 integers with mean 3.44 cannot have an SD of 2.47.
 GRIMMER_test(mean = 3.44, sd = 2.47, n_obs = 18)
 
+# Get a detailed list containing both the logical result and any possible values
+GRIMMER_test(mean = 3.5, sd = 1.21, n_obs = 10, return_list = TRUE)
 
 }
 \references{
 \insertRef{anaya2016grimmer}{rsprite2}
+\insertRef{allard2018grimmer}{rsprite2}
 }

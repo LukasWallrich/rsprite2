@@ -4,7 +4,15 @@
 \alias{GRIM_test}
 \title{GRIM test for mean}
 \usage{
-GRIM_test(mean, n_obs, m_prec = NULL, n_items = 1, return_values = FALSE)
+GRIM_test(
+  mean,
+  n_obs,
+  m_prec = NULL,
+  n_items = 1,
+  return_values = FALSE,
+  return_list = FALSE,
+  quiet = FALSE
+)
 }
 \arguments{
 \item{mean}{The mean of the distribution}
@@ -17,26 +25,40 @@ If not provided, taken based on the significant digits of \code{mean} - so only 
 \item{n_items}{Number of items in scale, if distribution represents scale averages.
 Defaults to 1, which represents any single-item measure.}
 
-\item{return_values}{Should all means consistent with the given parameters be returned?}
+\item{return_values}{A logical value. \emph{ignored if \code{return_list = TRUE}}.
+If \code{FALSE} (the default), the function
+returns a simple \code{TRUE} or \code{FALSE}. If \code{TRUE}, it returns a numeric
+vector of all possible means that are consistent with the parameters.
+If the test fails when \code{return_values = TRUE}, a warning is issued and
+the closest consistent mean is returned. If there are two equally close
+means, both are returned.}
+
+\item{return_list}{A logical value. If \code{FALSE} (the default), the function's
+return type is determined by \code{return_values}. If \code{TRUE}, the function
+instead returns a list containing two elements: a logical \code{passed} flag
+and a numeric vector \code{values} containing the relevant means.}
+
+\item{quiet}{Suppress warnings.}
 }
 \value{
-Either TRUE/FALSE, or all possible means (if test passes)/closest consistent mean (if test fails)
+The return type depends on the arguments. By default, a logical scalar
+(\code{TRUE} or \code{FALSE}). If \code{return_values = TRUE}, a numeric vector is returned.
+If \code{return_list = TRUE}, a list is returned.
 }
 \description{
 This function tests whether a given mean (with a specific precision) can
 result from a sample of a given size based on integer responses to one or more
 items. The test is based on Brown & Heathers (2017).
-If \code{return_values = TRUE} and if there is more than one precise mean compatible
-with the given parameters, all possible means are returned. In that case, if the
-given mean is not consistent, the closest consistent mean is returned with a
-warning.
 }
 \examples{
-# A sample of 28 integers cannot result in a mean of 5.19. This is shown by
-GRIM_test(5.19, 28)
+# A sample of 28 integers cannot result in a mean of 5.19.
+GRIM_test(mean = 5.19, n_obs = 28)
 
 # To find the closest possible mean, set return_values to TRUE
-GRIM_test(5.19, 28, return_values = TRUE)
+GRIM_test(mean = 5.19, n_obs = 28, return_values = TRUE)
+
+# To get a detailed list containing both the logical result and the values
+GRIM_test(mean = 5.19, n_obs = 28, return_list = TRUE)
 
 }
 \references{
