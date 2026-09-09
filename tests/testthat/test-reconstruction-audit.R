@@ -243,3 +243,13 @@ test_that("the documented restricted multi-item example yields a valid reconstru
                       restrictions_minimum = "range")
   expect_reconstruction(find_possible_distribution(p, seed = 1), p)
 })
+
+
+test_that("older parameter objects with rounded restriction names remain usable", {
+  p <- set_parameters(1.95, 1.55, 20, 1, 5, n_items = 3,
+                      restrictions_exact = list("3" = 0, "3.67" = 2),
+                      restrictions_minimum = "range")
+  p$restriction_values <- NULL
+  names(p$restrictions_exact) <- c("3", "3.67")
+  expect_reconstruction(find_possible_distribution(p, seed = 1), p)
+})

@@ -30,7 +30,8 @@ A tibble or list (depending on the \code{return_tibble} argument) with:
 \item{distribution}{The distribution that was found (if success) / whose SD came closest to the target during the search (if failure) - numeric}
 \item{mean}{The exact mean of the distribution - numeric}
 \item{sd}{The SD of the distribution that was found (success) / that came closest (failure) - numeric}
-\item{iterations}{The number of iterations required to achieve the specified SD - numeric - the first time this distribution was found}
+\item{iterations}{The number of SD adjustments attempted on the first search that found this distribution.
+Zero if its initial candidate succeeded; on failure, the total number attempted.}
 }
 \description{
 This function aims to find several possible distribution that would give rise to

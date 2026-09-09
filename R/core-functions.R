@@ -193,7 +193,8 @@ set_parameters <- function(mean, sd, n_obs, min_val, max_val,
 #' \item{distribution}{The distribution that was found (if success) / whose SD came closest to the target during the search (if failure) - numeric}
 #' \item{mean}{The exact mean of the distribution - numeric}
 #' \item{sd}{The SD of the distribution that was found (success) / that came closest (failure) - numeric}
-#' \item{iterations}{The number of iterations required to achieve the specified SD - numeric - the first time this distribution was found}
+#' \item{iterations}{The number of SD adjustments attempted on the first search that found this distribution.
+#' Zero if its initial candidate succeeded; on failure, the total number attempted.}
 #'
 #' @examples
 #'
@@ -349,7 +350,12 @@ find_possible_distribution <- function(parameters, seed = NULL, values_only = FA
   counts_match <- function(restrictions, exact) {
     targets <- parameters$restriction_values[[if (exact) "exact" else "minimum"]]
     # Support parameter objects created by older package versions.
-    if (is.null(targets)) targets <- as.numeric(names(restrictions))
+    if (is.null(targets)) {
+      lattice <- sort(unique(c(parameters$possible_values, parameters$fixed_values)))
+      normalised <- .normalise_restrictions(restrictions, lattice, "restrictions")
+      restrictions <- normalised$restrictions
+      targets <- lattice[normalised$indices]
+    }
     all(vapply(seq_along(restrictions), function(i) {
       count <- sum(.equalish(values, targets[i]))
       if (exact) count == restrictions[[i]] else count >= restrictions[[i]]
