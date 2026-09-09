@@ -60,6 +60,8 @@ test_that("statistical tests reject malformed inputs and preserve undefined rang
   expect_no_warning(.sd_limits(1, 2, 1, 3, quiet = TRUE))
   expect_error(GRIM_test(1e16, 10, quiet = TRUE), "reliable integer arithmetic")
   expect_true(GRIM_test(2, 1e9, m_prec = 0, quiet = TRUE))
+  expect_error(GRIMMER_test(3.12, 1.53, 1e6, 2, 2, return_values = TRUE, quiet = TRUE),
+               "More than one million candidates")
 })
 
 test_that("SD tests are invariant to large integer translations", {

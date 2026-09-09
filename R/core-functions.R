@@ -941,7 +941,8 @@ GRIMMER_test <- function(mean, sd, n_obs, m_prec = NULL, sd_prec = NULL,
   half_sd <- 0.5 * 10^-sd_prec
   lower_sd <- max(0, sd - half_sd)
   upper_sd <- sd + half_sd
-  values <- numeric(0)
+  values <- list()
+  candidate_count <- 0
   for (total in totals) {
     squared_mean <- total^2 / n_obs
     lower_ss <- (n_obs - 1) * (lower_sd * n_items)^2 + squared_mean
@@ -961,12 +962,14 @@ GRIMMER_test <- function(mean, sd, n_obs, m_prec = NULL, sd_prec = NULL,
     first_sd <- sqrt(max(0, (lower - squared_mean) / (n_obs - 1))) / n_items
     if (!.rounding_compatible(first_sd, sd, sd_prec)) next
     if (!return_values && !return_list) return(result(TRUE))
+    candidate_count <- candidate_count + floor((upper - lower) / 2) + 1
+    .assert_candidate_count(candidate_count)
     sums_of_squares <- .integer_sequence(lower, upper, by = 2)
     candidate_sd <- sqrt(pmax(0, (sums_of_squares - squared_mean) /
                                   (n_obs - 1))) / n_items
     matches <- .rounding_compatible(candidate_sd, sd, sd_prec)
-    values <- c(values, candidate_sd[matches])
+    values[[length(values) + 1L]] <- candidate_sd[matches]
   }
-  values <- sort(unique(values))
+  values <- sort(unique(as.numeric(unlist(values, use.names = FALSE))))
   result(length(values) > 0, values)
 }

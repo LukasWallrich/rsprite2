@@ -30,8 +30,12 @@
 
 .integer_sequence <- function(lower, upper, by = 1) {
   if (lower > upper) return(numeric(0))
-  if (floor((upper - lower) / by) + 1 > 1e6) {
+  .assert_candidate_count(floor((upper - lower) / by) + 1)
+  seq(lower, upper, by = by)
+}
+
+.assert_candidate_count <- function(count) {
+  if (!is.finite(count) || count > 1e6) {
     stop("More than one million candidates would need enumeration; increase the reported precision or request a logical GRIM result.", call. = FALSE)
   }
-  seq(lower, upper, by = by)
 }
