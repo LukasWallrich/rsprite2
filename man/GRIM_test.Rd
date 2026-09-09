@@ -17,12 +17,13 @@ GRIM_test(
 \arguments{
 \item{mean}{The mean of the distribution}
 
-\item{n_obs}{The number of observations (sample size)}
+\item{n_obs}{The number of observations (sample size), an integer of at least two for reconstruction.}
 
-\item{m_prec}{The precision of the mean, as number of digits after the decimal point.
-If not provided, taken based on the significant digits of \code{mean} - so only needed if reported mean ends in 0}
+\item{m_prec}{The precision of the reported mean, as a nonnegative integer number of
+decimal places (at most 308), consistent with the supplied value. Inferred from the
+numeric value if omitted; specify it explicitly when the reported mean ends in zero.}
 
-\item{n_items}{Number of items in scale, if distribution represents scale averages.
+\item{n_items}{Positive integer number of items in scale, if distribution represents scale averages.
 Defaults to 1, which represents any single-item measure.}
 
 \item{return_values}{A logical value. \emph{ignored if \code{return_list = TRUE}}.
