@@ -191,8 +191,8 @@ if (all(requireNamespace(req_packages, quietly = TRUE))) {
   p <- plot_distributions(poss)
 
   test_that("histograms are produced", {
-    expect_class(p$layers[[1]]$stat, "StatBin")
-    expect_identical(p$scales$scales[[1]]$limits, c(1, 5))
+    expect_class(p$layers[[1]]$stat, "StatCount")
+    expect_true(is.function(p$scales$scales[[1]]$limits))
     expect_identical(p$facet$params$nrow, 3)
   })
 }

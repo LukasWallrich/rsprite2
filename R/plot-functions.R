@@ -4,11 +4,17 @@
 #' They can be shown as histograms or as \href{https://towardsdatascience.com/what-why-and-how-to-read-empirical-cdf-123e2b922480}{cumulative distributions (ECDF) plots}. The latter give
 #' more information, yet not all audiences are familiar with them.
 #'
-#' @param distributions Tibble with a column `distribution` and an identifier (`id`), typically as returned from \code{\link{find_possible_distributions}}.
+#' @param distributions Nonempty tibble with a list-column `distribution` containing nonempty, finite numeric vectors, and an identifier (`id`), typically as returned from \code{\link{find_possible_distributions}}. Density plots require at least two distinct responses in each distribution.
 #' @param plot_type Plot multiple histograms, or overlapping cumulative distribution plots, or density plots? "auto" is to plot histograms if up to 9 distributions are passed, or if there are fewer than 10 discrete values, and empirical cumulative distribution plots otherwise
-#' @param max_plots How many distributions should *at most* be plotted? If more are passed, this number is randomly selected.
+#' @param max_plots Positive integer: how many distributions should *at most* be plotted? If more are passed, this number is randomly selected.
 #' @param show_ids Should ids of the distributions be shown with ecdf and density charts? Defaults to no, since the default ids are not meaningful.
 #' @param facets Should distributions be shown in one chart or in multiple small charts? Only considered for ecdf and density charts, histograms are always shown in facets
+#'
+#' @details Histograms show the exact frequency at each observed response. Bar widths
+#' use the response spacing (`1 / n_items`) for SPRITE results. For ordinary
+#' tibbles, widths use the smallest observed spacing, or 1 if all responses are
+#' identical. Scale endpoints and complete bars are retained. Empty inputs
+#' produce an informative error.
 #'
 #' @return A ggplot2 object that can be styled with functions such as \code{\link[ggplot2]{labs}} or \code{\link[ggplot2]{theme_linedraw}}
 
@@ -28,7 +34,7 @@
 
 plot_distributions <- function(distributions, plot_type = c("auto", "histogram", "ecdf", "density"),
                                max_plots = 100, show_ids = FALSE, facets = NULL) {
-  .check_req_packages(c("tidyr", "ggplot2", "rlang"))
+  .check_req_packages(c("tidyr", "ggplot2", "rlang", "scales"))
 
   # To avoid depending on rlang, this cannot be imported
   .data <- rlang::.data
@@ -38,8 +44,24 @@ plot_distributions <- function(distributions, plot_type = c("auto", "histogram",
 
   assert_tibble(distributions)
   assert_subset(c("id", "distribution"), names(distributions))
-  assert_choice(plot_type[1], c("auto", "histogram", "ecdf", "density"))
-  plot_type <- plot_type[1]
+  if (missing(plot_type)) plot_type <- "auto"
+  assert_choice(plot_type, c("auto", "histogram", "ecdf", "density"))
+  assert_int(max_plots, lower = 1)
+  assert_flag(show_ids)
+  if (!is.null(facets)) assert_flag(facets)
+  if (nrow(distributions) == 0L) {
+    stop("No distributions to plot: provide at least one distribution.", call. = FALSE)
+  }
+  if (!is.list(distributions$distribution) ||
+      !all(vapply(distributions$distribution, function(x) {
+        is.numeric(x) && is.null(dim(x)) && length(x) > 0L && all(is.finite(x))
+      }, logical(1)))) {
+    stop("distribution must be a list-column of nonempty, finite numeric vectors.", call. = FALSE)
+  }
+  if (plot_type == "density" &&
+      any(vapply(distributions$distribution, function(x) length(unique(x)) < 2L, logical(1)))) {
+    stop("Density plots require at least two distinct responses in each distribution.", call. = FALSE)
+  }
 
   if (any(duplicated(distributions$id))) {
     warning("id column should not contain duplicates. Replaced by row number instead.")
@@ -79,15 +101,23 @@ plot_distributions <- function(distributions, plot_type = c("auto", "histogram",
     facets <- FALSE
   }
 
-  assert_logical(facets)
-
-  p <- ggplot2::ggplot(distributions_long, ggplot2::aes(x = .data$distribution)) + ggplot2::theme_light() +
-    ggplot2::scale_x_continuous(limits = c(scale_min, scale_max))
-
+  p <- ggplot2::ggplot(distributions_long, ggplot2::aes(x = .data$distribution)) +
+    ggplot2::theme_light()
 
   if (plot_type == "histogram") {
-    bins <- min(30, unique_vals)
-    p <- p + ggplot2::geom_histogram(bins = bins)
+    if (inherits(distributions, "sprite_distributions")) {
+      spacing <- 1 / params$n_items
+    } else {
+      gaps <- diff(sort(unique(distributions_long$distribution)))
+      spacing <- if (length(gaps)) min(gaps) else 1
+    }
+    # Train on bar extents as well as the declared scale, so endpoint bars
+    # remain complete and responses are never merged into arbitrary bins.
+    p <- p + ggplot2::geom_bar(width = 0.9 * spacing) +
+      ggplot2::scale_x_continuous(limits = function(x) range(x, scale_min, scale_max)) +
+      ggplot2::labs(x = "Response", y = "Count")
+  } else {
+    p <- p + ggplot2::scale_x_continuous(limits = c(scale_min, scale_max))
   }
 
   if (plot_type == "density") {

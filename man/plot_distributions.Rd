@@ -13,11 +13,11 @@ plot_distributions(
 )
 }
 \arguments{
-\item{distributions}{Tibble with a column \code{distribution} and an identifier (\code{id}), typically as returned from \code{\link{find_possible_distributions}}.}
+\item{distributions}{Nonempty tibble with a list-column \code{distribution} containing nonempty, finite numeric vectors, and an identifier (\code{id}), typically as returned from \code{\link{find_possible_distributions}}. Density plots require at least two distinct responses in each distribution.}
 
 \item{plot_type}{Plot multiple histograms, or overlapping cumulative distribution plots, or density plots? "auto" is to plot histograms if up to 9 distributions are passed, or if there are fewer than 10 discrete values, and empirical cumulative distribution plots otherwise}
 
-\item{max_plots}{How many distributions should \emph{at most} be plotted? If more are passed, this number is randomly selected.}
+\item{max_plots}{Positive integer: how many distributions should \emph{at most} be plotted? If more are passed, this number is randomly selected.}
 
 \item{show_ids}{Should ids of the distributions be shown with ecdf and density charts? Defaults to no, since the default ids are not meaningful.}
 
@@ -30,6 +30,13 @@ A ggplot2 object that can be styled with functions such as \code{\link[ggplot2]{
 This plots distributions identified by \code{\link{find_possible_distributions}} using ggplot2.
 They can be shown as histograms or as \href{https://towardsdatascience.com/what-why-and-how-to-read-empirical-cdf-123e2b922480}{cumulative distributions (ECDF) plots}. The latter give
 more information, yet not all audiences are familiar with them.
+}
+\details{
+Histograms show the exact frequency at each observed response. Bar widths
+use the response spacing (\code{1 / n_items}) for SPRITE results. For ordinary
+tibbles, widths use the smallest observed spacing, or 1 if all responses are
+identical. Scale endpoints and complete bars are retained. Empty inputs
+produce an informative error.
 }
 \examples{
 sprite_parameters <- set_parameters(mean = 2.2, sd = 1.3, n_obs = 20,
