@@ -111,12 +111,13 @@ set_parameters <- function(mean, sd, n_obs, min_val, max_val,
   fixed_responses <- c(rep(poss_values[minimum$indices], unlist(restrictions_minimum)),
                        rep(poss_values[exact$indices], unlist(restrictions_exact)))
   fixed_values <- poss_values[exact$indices]
+  restriction_values <- list(exact = fixed_values, minimum = poss_values[minimum$indices])
   possible_values <- poss_values[!seq_along(poss_values) %in% exact$indices]
   if (!length(possible_values) && n_fixed < n_obs) {
     stop("Exact restrictions leave no allowed responses for the remaining observations.")
   }
 
-  out <- .named_list(mean, sd, n_obs, min_val, max_val, m_prec, sd_prec, n_items, restrictions_minimum, restrictions_exact, possible_values, fixed_values, fixed_responses, n_fixed)
+  out <- .named_list(mean, sd, n_obs, min_val, max_val, m_prec, sd_prec, n_items, restrictions_minimum, restrictions_exact, possible_values, fixed_values, fixed_responses, n_fixed, restriction_values)
 
   class(out) <- c("sprite_parameters", class(out))
 
@@ -286,7 +287,8 @@ find_possible_distributions <- function(parameters, n_distributions = 10, seed =
 #' \item{values}{The distribution that was found (if success) / whose SD came closest to the target during the search (if failure) - numeric}
 #' \item{mean}{The exact mean of the distribution - numeric}
 #' \item{sd}{The SD of the distribution that was found (success) / that came closest (failure) - numeric}
-#' \item{iterations}{The number of iterations required to achieve the specified SD - numeric}
+#' \item{iterations}{The number of SD adjustments attempted; zero if the initial candidate succeeds.
+#' On failure, this is the total attempted, even if the closest candidate was found earlier.}
 #' If `values_only = TRUE`, then the distribution is returned if one was found, and NULL if it failed.
 #'
 #' @examples
@@ -342,11 +344,14 @@ find_possible_distribution <- function(parameters, seed = NULL, values_only = FA
 .valid_reconstruction <- function(values, parameters) {
   if (length(values) != parameters$n_obs || any(!is.finite(values)) ||
       any(values < parameters$min_val | values > parameters$max_val) ||
-      any(!.equalish(values * parameters$n_items, round(values * parameters$n_items))) ||
+      any(!values %in% c(parameters$possible_values, parameters$fixed_values)) ||
       !.rounding_compatible(mean(values), parameters$mean, parameters$m_prec)) return(FALSE)
   counts_match <- function(restrictions, exact) {
+    targets <- parameters$restriction_values[[if (exact) "exact" else "minimum"]]
+    # Support parameter objects created by older package versions.
+    if (is.null(targets)) targets <- as.numeric(names(restrictions))
     all(vapply(seq_along(restrictions), function(i) {
-      count <- sum(.equalish(values, as.numeric(names(restrictions)[i])))
+      count <- sum(.equalish(values, targets[i]))
       if (exact) count == restrictions[[i]] else count >= restrictions[[i]]
     }, logical(1)))
   }
@@ -382,6 +387,9 @@ find_possible_distribution <- function(parameters, seed = NULL, values_only = FA
 
   if (!length(vec) || length(poss_non_restricted) < 2L) return(vec_original)
   poss_values <- sort(unique(c(poss_non_restricted, fixed_vals)))
+  # Count full-lattice steps: floating gaps can differ at large scale offsets.
+  allowed_indices <- match(poss_non_restricted, poss_values)
+  gaps <- diff(allowed_indices)
 
   maxToInc <- poss_non_restricted[length(poss_non_restricted) - 1] # maximum value that we can increment
   minToDec <- poss_non_restricted[2] # minimum value that we can decrement
@@ -418,7 +426,7 @@ find_possible_distribution <- function(parameters, seed = NULL, values_only = FA
   whichWillBump1 <- whichCanBump1[as.integer(runif(1) * length(whichCanBump1)) + 1]
   willBump1 <- vec[whichWillBump1]
   new1 <- poss_non_restricted[which(poss_non_restricted == willBump1) + ifelse(incFirst, 1, -1)]
-  gap1 <- new1 - vec[whichWillBump1] # Note when restricted values have been skipped
+  gap1 <- match(new1, poss_values) - match(willBump1, poss_values)
   vec[whichWillBump1] <- new1
 
   # At this point we can decide to only change one of the elements (decrement one without incrementing another, or vice versa).
@@ -462,14 +470,14 @@ find_possible_distribution <- function(parameters, seed = NULL, values_only = FA
     whichWillBump2 <- whichCanBump2[as.integer(runif(1) * length(whichCanBump2)) + 1]
     willBump2 <- vec[whichWillBump2]
     new2 <- poss_non_restricted[which(poss_non_restricted == willBump2) + ifelse(incFirst, -1, 1)]
-    gap2 <- new2 - vec[whichWillBump2] # Note when restricted values have been skipped
+    gap2 <- match(new2, poss_values) - match(willBump2, poss_values)
 
     gap_resolved <- NA
     # Go into restricted values handling only when necessary - should be good for performance, but
     # leads to more complex backtracking here.
     if (!.equalish(abs(gap1), abs(gap2))) {
       gap_resolved <- FALSE
-      poss <- which(.equalish(diff(poss_non_restricted), abs(gap1)))
+      poss <- which(.equalish(gaps, abs(gap1)))
       if (length(poss) > 1) {
         low <- poss_non_restricted[poss]
         up <- poss_non_restricted[poss + 1]
@@ -505,7 +513,7 @@ find_possible_distribution <- function(parameters, seed = NULL, values_only = FA
           vec <- vec_backup
           replaced <- 0
           i <- i + 1 # Gap of 1 suggest 2 steps might be needed
-          poss <- which(.equalish(diff(poss_non_restricted), abs(gap1) / i))
+          poss <- which(.equalish(gaps, abs(gap1) / i))
           if (length(poss) > 0) {
             low <- poss_non_restricted[poss]
             up <- poss_non_restricted[poss + 1]

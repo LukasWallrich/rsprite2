@@ -20,7 +20,8 @@ Unless \code{values_only = TRUE}, a list with:
 \item{values}{The distribution that was found (if success) / whose SD came closest to the target during the search (if failure) - numeric}
 \item{mean}{The exact mean of the distribution - numeric}
 \item{sd}{The SD of the distribution that was found (success) / that came closest (failure) - numeric}
-\item{iterations}{The number of iterations required to achieve the specified SD - numeric}
+\item{iterations}{The number of SD adjustments attempted; zero if the initial candidate succeeds.
+On failure, this is the total attempted, even if the closest candidate was found earlier.}
 If \code{values_only = TRUE}, then the distribution is returned if one was found, and NULL if it failed.
 }
 \description{

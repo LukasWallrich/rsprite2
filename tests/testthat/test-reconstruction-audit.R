@@ -12,6 +12,7 @@ test_that("restriction keys identify one lattice value and counts are validated"
   expect_reconstruction(find_possible_distribution(p, seed = 1), p)
   q <- set_parameters(2, 1, 10, 1, 3, restrictions_minimum = list(" 2.00 " = 2))
   expect_equal(q$fixed_responses, c(2, 2))
+  expect_reconstruction(find_possible_distribution(q, seed = 1), q)
   fine <- set_parameters(1.5, .2, 10, 1, 2, n_items = 200,
                          restrictions_exact = list("1.01" = 1), dont_test = TRUE)
   expect_length(fine$fixed_values, 1)
@@ -22,6 +23,9 @@ test_that("restriction keys identify one lattice value and counts are validated"
   precise <- set_parameters(2, 1, 10, 1, 4, n_items = 3,
                             restrictions_exact = list("3.6667" = 1))
   expect_equal(precise$fixed_values, 11/3)
+  three_places <- set_parameters(2, 1, 10, 1, 3, n_items = 3,
+                                 restrictions_exact = list("1.667" = 1))
+  expect_equal(three_places$fixed_values, 5/3)
   expect_error(set_parameters(1.5, .2, 10, 1, 2, n_items = 201,
                               restrictions_exact = list("1.01" = 1), dont_test = TRUE), "exactly one")
   for (bad in list(-1, 2.5, NA_real_, Inf, "two")) {
@@ -40,6 +44,7 @@ test_that("singleton, fully fixed, and endpoint restrictions are safe", {
   for (seed in 1:5) {
     p <- set_parameters(3, 0, 10, 1, 3, restrictions_exact = list("1" = 0, "2" = 0))
     expect_reconstruction(find_possible_distribution(p, seed = seed), p)
+    expect_equal(find_possible_distribution(p, seed = seed)$iterations, 0)
     p <- set_parameters(2, .7, 20, 1, 4, restrictions_exact = list("4" = 0))
     expect_reconstruction(find_possible_distribution(p, seed = seed), p)
     p <- set_parameters(3, .7, 20, 1, 4, restrictions_exact = list("1" = 0))
@@ -127,6 +132,11 @@ test_that("stopping counts repeated failures and failures after success", {
   p <- set_parameters(2, 1, 3, 1, 3)
   expect_warning(suppressMessages(result <- find_possible_distributions(p, 5, return_failures = TRUE)), "last 10 attempts")
   expect_identical(calls, 11L)
+  calls <- 0L
+  expect_warning(suppressMessages(as_list <- find_possible_distributions(p, 5,
+                           return_tibble = FALSE, return_failures = TRUE)), "last 10 attempts")
+  expect_identical(as_list$distribution, result$distribution)
+  expect_identical(as_list$outcome, result$outcome)
   expect_equal(nrow(result), 2)
   for (i in seq_len(nrow(result))) {
     expect_identical(result$sd[i], sd(result$distribution[[i]]))
@@ -193,10 +203,10 @@ test_that("parameter validation and zero requested distributions are explicit", 
 })
 
 test_that("restricted shifts preserve lattice and mean in either direction", {
-  for (items in c(1, 3)) {
-    allowed <- c(1, 2, 4, 5) / items
+  for (items in c(1, 3)) for (lattice in list(c(1, 2, 4, 5), c(1, 2, 5, 6))) {
+    allowed <- lattice / items
     vec <- rep(allowed, each = 5)
-    fixed <- 3 / items
+    fixed <- setdiff(seq_len(max(lattice)), lattice) / items
     target <- mean(vec)
     set.seed(413)
     changes_up <- changes_down <- 0L
@@ -214,4 +224,22 @@ test_that("restricted shifts preserve lattice and mean in either direction", {
     expect_gt(changes_up, 0L)
     expect_gt(changes_down, 0L)
   }
+})
+
+
+test_that("restrictions retain exact numeric targets at large scale offsets", {
+  values <- 1e6 + c(1, rep(4, 9)) / 7
+  p <- set_parameters(round(mean(values), 2), round(sd(values), 2), 10, 1000000, 1000001,
+                      n_items = 7, m_prec = 2, sd_prec = 2, dont_test = TRUE,
+                      restrictions_minimum = stats::setNames(list(1), sprintf("%.17g", values[1])))
+  expect_identical(p$restriction_values$minimum, values[1])
+  expect_true(.valid_reconstruction(values, p))
+  expect_reconstruction(find_possible_distribution(p, seed = 1), p)
+})
+
+test_that("the documented restricted multi-item example yields a valid reconstruction", {
+  p <- set_parameters(1.95, 1.55, 20, 1, 5, n_items = 3,
+                      restrictions_exact = list("3" = 0, "3.67" = 2),
+                      restrictions_minimum = "range")
+  expect_reconstruction(find_possible_distribution(p, seed = 1), p)
 })
