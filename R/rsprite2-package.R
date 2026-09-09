@@ -14,7 +14,6 @@ rSprite.maxDeltaLoopsUpper <- 1000000
 rSprite.maxDupLoops <- 20
 
 rSprite.dust <- 1e-10 #To account for floating point issues
-rSprite.huge <- 1e15 #Should this not be Inf?
 
 #' @keywords internal
 "_PACKAGE"

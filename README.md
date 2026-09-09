@@ -36,7 +36,13 @@ checks whether a reported standard deviation is consistent with a
 reported mean and sample size. They can help catch impossible
 distributions and reporting errors without running any simulations.
 
-Passing GRIMMER is necessary but does not prove that a sample with the reported statistics exists, even when scale bounds are supplied. A successfully reconstructed sample whose statistics and restrictions have been verified provides a witness of feasibility. Conversely, a failed SPRITE search does not prove impossibility, and the frequency with which SPRITE finds a distribution does not estimate the probability that it was the original sample.
+Passing GRIMMER is necessary but does not prove that a sample with the
+reported statistics exists, even when scale bounds are supplied. A
+successfully reconstructed sample whose statistics and restrictions have
+been verified provides a witness of feasibility. Conversely, a failed
+SPRITE search does not prove impossibility, and the frequency with which
+SPRITE finds a distribution does not estimate the probability that it
+was the original sample.
 
 ## Installation
 
@@ -69,16 +75,16 @@ find_possible_distribution(sprite_parameters)
 #> [1] "success"
 #> 
 #> $values
-#>  [1] 2 2 2 4 2 1 1 4 1 1 2 1 4 2 5 1 4 2 3 1
+#>  [1] 2 1 4 2 1 4 1 1 2 2 1 4 3 3 1 2 4 1 5 1
 #> 
 #> $mean
 #> [1] 2.25
 #> 
 #> $sd
-#> [1] 1.292692
+#> [1] 1.332785
 #> 
 #> $iterations
-#> [1] 4
+#> [1] 1
 ```
 
 If these means and standard deviations had been reported to two decimal
@@ -94,7 +100,7 @@ find_possible_distribution(sprite_parameters)
 #> [1] "success"
 #> 
 #> $values
-#>  [1] 4 4 1 1 1 1 1 4 1 2 2 4 4 2 1 2 1 1 4 3
+#>  [1] 2 1 2 1 2 1 2 1 2 1 1 5 1 2 3 2 5 2 4 4
 #> 
 #> $mean
 #> [1] 2.2
@@ -103,7 +109,7 @@ find_possible_distribution(sprite_parameters)
 #> [1] 1.321881
 #> 
 #> $iterations
-#> [1] 4
+#> [1] 3
 ```
 
 To find more than one distribution that matches the parameters, you can
@@ -115,15 +121,15 @@ find_possible_distributions(sprite_parameters, 10)
 #> # A tibble: 9 × 6
 #>      id outcome distribution  mean    sd iterations
 #>   <int> <chr>   <list>       <dbl> <dbl>      <dbl>
-#> 1     1 success <dbl [20]>     2.2  1.32          8
+#> 1     1 success <dbl [20]>     2.2  1.32          0
 #> 2     2 success <dbl [20]>     2.2  1.32          2
-#> 3     3 success <dbl [20]>     2.2  1.32          3
+#> 3     3 success <dbl [20]>     2.2  1.32          8
 #> 4     4 success <dbl [20]>     2.2  1.32          4
-#> 5     5 success <dbl [20]>     2.2  1.32          4
-#> 6     6 success <dbl [20]>     2.2  1.32          3
-#> 7     7 success <dbl [20]>     2.2  1.32          1
-#> 8     8 success <dbl [20]>     2.2  1.32          1
-#> 9     9 success <dbl [20]>     2.2  1.32          4
+#> 5     5 success <dbl [20]>     2.2  1.32          0
+#> 6     6 success <dbl [20]>     2.2  1.32          5
+#> 7     7 success <dbl [20]>     2.2  1.32         15
+#> 8     8 success <dbl [20]>     2.2  1.32          5
+#> 9     9 success <dbl [20]>     2.2  1.32          2
 ```
 
 They can then be plotted to identify features that are shared across
@@ -133,11 +139,9 @@ distributions.
 res <- find_possible_distributions(sprite_parameters, 10)
 #> Only 9 matching distributions could be found. You can try again - given that SPRITE is based on random number generation, more distributions might be found then.
 plot_distributions(res)
-#> Warning: Removed 18 rows containing missing values or values outside the scale range
-#> (`geom_bar()`).
 ```
 
-<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-7-1.png" alt="" width="100%" />
 
 ## Advanced features
 
@@ -157,18 +161,18 @@ find_possible_distribution(sprite_parameters)
 #> [1] "success"
 #> 
 #> $values
-#>  [1] 4.333333 1.000000 1.000000 1.000000 5.000000 1.000000 5.000000 4.333333
-#>  [9] 1.000000 1.000000 1.000000 1.000000 3.000000 1.000000 3.333333 1.000000
-#> [17] 1.000000 1.000000 1.000000 1.000000
+#>  [1] 1.000000 3.333333 1.000000 1.000000 1.000000 1.666667 1.000000 1.000000
+#>  [9] 1.000000 5.000000 1.000000 5.000000 1.000000 1.000000 5.000000 1.000000
+#> [17] 2.000000 1.000000 1.000000 4.000000
 #> 
 #> $mean
 #> [1] 1.95
 #> 
 #> $sd
-#> [1] 1.549476
+#> [1] 1.553246
 #> 
 #> $iterations
-#> [1] 49
+#> [1] 34
 ```
 
 ### Restrictions
@@ -186,19 +190,19 @@ sprite_parameters <- set_parameters(mean = 1.95, sd = 1.55, n_obs = 20,
                                     restrictions_minimum = list("1" = 1, "5" = 1))
 find_possible_distribution(sprite_parameters)
 #> $outcome
-#> [1] "failure"
+#> [1] "success"
 #> 
 #> $values
-#>  [1] 1.000000 1.000000 1.000000 1.000000 1.000000 1.000000 1.000000 4.000000
-#>  [9] 1.000000 1.000000 1.000000 4.333333 1.000000 1.000000 1.000000 4.333333
+#>  [1] 1.666667 1.000000 1.000000 2.000000 1.000000 1.000000 1.000000 1.000000
+#>  [9] 1.000000 1.000000 1.000000 1.000000 1.000000 5.000000 5.000000 1.000000
 #> [17] 1.000000 5.000000 3.666667 3.666667
 #> 
 #> $mean
 #> [1] 1.95
 #> 
 #> $sd
-#> [1] 1.511264
+#> [1] 1.549476
 #> 
 #> $iterations
-#> [1] 20000
+#> [1] 45
 ```

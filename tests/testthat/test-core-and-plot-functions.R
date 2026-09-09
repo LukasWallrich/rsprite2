@@ -165,7 +165,14 @@ if (requireNamespace("tibble", quietly = TRUE)) {
 
   test_that("Samples are found", {
     expect_class(poss, "sprite_distributions")
-    expect_snapshot_value(poss, style = "serialize")
+    expect_equal(nrow(poss), 5)
+    for (i in seq_len(nrow(poss))) {
+      values <- poss$distribution[[i]]
+      expect_true(.valid_reconstruction(values, parameters))
+      expect_true(.rounding_compatible(sd(values), parameters$sd, parameters$sd_prec))
+      expect_identical(poss$mean[i], mean(values))
+      expect_identical(poss$sd[i], sd(values))
+    }
   })
 }
 

@@ -17,7 +17,8 @@ find_possible_distributions(
 
 \item{n_distributions}{The target number of distributions to return.}
 
-\item{seed}{An integer to use as the seed for random number generation. Set this in scripts to ensure reproducibility.}
+\item{seed}{An integer to use as the seed for random number generation. Set this in scripts to ensure reproducibility.
+Explicit seeds leave the caller's random number generator state unchanged.}
 
 \item{return_tibble}{Should a tibble, rather than a list, be returned? Requires the \code{tibble}-package, ignored if that package is not available.}
 
@@ -26,15 +27,21 @@ find_possible_distributions(
 \value{
 A tibble or list (depending on the \code{return_tibble} argument) with:
 \item{outcome}{success or failure - character}
-\item{distribution}{The distribution that was found (if success) / that had the closest variance (if failure) - numeric}
+\item{distribution}{The distribution that was found (if success) / whose SD came closest to the target during the search (if failure) - numeric}
 \item{mean}{The exact mean of the distribution - numeric}
 \item{sd}{The SD of the distribution that was found (success) / that came closest (failure) - numeric}
-\item{iterations}{The number of iterations required to achieve the specified SD - numeric - the first time this distribution was found}
+\item{iterations}{The number of SD adjustments attempted on the first search that found this distribution.
+Zero if its initial candidate succeeded; on failure, the total number attempted.}
 }
 \description{
 This function aims to find several possible distribution that would give rise to
 the observed sample parameters. For that, you need to pass a list of parameters,
 created with \code{\link{set_parameters}}
+}
+\details{
+A successful search supplies one compatible reconstruction. Search failure does not prove
+impossibility, and the frequencies with which reconstructions are found do not estimate
+probabilities for the original data. Rounding ties are accepted in either direction.
 }
 \examples{
 
