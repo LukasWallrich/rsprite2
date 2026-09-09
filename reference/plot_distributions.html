@@ -71,7 +71,7 @@ more information, yet not all audiences are familiar with them.</p>
 
 
 <dl><dt id="arg-distributions">distributions<a class="anchor" aria-label="anchor" href="#arg-distributions"></a></dt>
-<dd><p>Tibble with a column <code>distribution</code> and an identifier (<code>id</code>), typically as returned from <code><a href="find_possible_distributions.html">find_possible_distributions</a></code>.</p></dd>
+<dd><p>Nonempty tibble with a list-column <code>distribution</code> containing nonempty, finite numeric vectors, and an identifier (<code>id</code>), typically as returned from <code><a href="find_possible_distributions.html">find_possible_distributions</a></code>. Density plots require at least two distinct responses in each distribution.</p></dd>
 
 
 <dt id="arg-plot-type">plot_type<a class="anchor" aria-label="anchor" href="#arg-plot-type"></a></dt>
@@ -79,7 +79,7 @@ more information, yet not all audiences are familiar with them.</p>
 
 
 <dt id="arg-max-plots">max_plots<a class="anchor" aria-label="anchor" href="#arg-max-plots"></a></dt>
-<dd><p>How many distributions should <em>at most</em> be plotted? If more are passed, this number is randomly selected.</p></dd>
+<dd><p>Positive integer: how many distributions should <em>at most</em> be plotted? If more are passed, this number is randomly selected.</p></dd>
 
 
 <dt id="arg-show-ids">show_ids<a class="anchor" aria-label="anchor" href="#arg-show-ids"></a></dt>
@@ -93,6 +93,14 @@ more information, yet not all audiences are familiar with them.</p>
     <div id="value">
     <h2>Value</h2>
     <p>A ggplot2 object that can be styled with functions such as <code><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></code> or <code><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_linedraw</a></code></p>
+    </div>
+    <div id="details">
+    <h2>Details</h2>
+    <p>Histograms show the exact frequency at each observed response. Bar widths
+use the response spacing (<code>1 / n_items</code>) for SPRITE results. For ordinary
+tibbles, widths use the smallest observed spacing, or 1 if all responses are
+identical. Scale endpoints and complete bars are retained. Empty inputs
+produce an informative error.</p>
     </div>
 
     <div id="ref-examples">
