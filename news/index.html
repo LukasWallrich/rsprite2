@@ -49,9 +49,10 @@
 
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.2.1.9002" id="rsprite2-0219002">rsprite2 0.2.1.9002<a class="anchor" aria-label="anchor" href="#rsprite2-0219002"></a></h2>
-<ul><li>Changed implementation of <code><a href="../reference/GRIM_test.html">GRIM_test()</a></code> to more direct calculation rather than iterative check to increase transparency and efficiency. If requested to return the nearest possible means, the function now also correctly returns two values if there are two equidistant values. (For users wishing to use the original algorithm, it is presently retained as an <em>unexported</em> function that can be called with <code>rsprite2:::GRIM_test_old()</code>.)</li>
-<li>Changed implementation of <code><a href="../reference/GRIMMER_test.html">GRIMMER_test()</a></code> to account for the fact that multiple exact means may be compatible with the reported means, if the mean is reported to a lower precision than the standard deviation. The previous version missed some valid SDs in this rare case. Also optimised the implementation of the algorithm to catch special cases explicitly and run a lot faster.</li>
-<li>Added a <code><a href="../reference/boundary_test.html">boundary_test()</a></code> function that tests whether a standard deviation is within the possible range. This tests was already part of GRIMMER, but is now exported and separately documented for transparency. The underlying function to calculate SD limits now also accounts for various rounding choices for values ending in .5, i.e. up, down or to even, to reduce the risk of false positives, and is vectorised to increase speed.</li>
+<ul><li><p>Maintenance: fixed workflow syntax and enabled package checks on pull requests. Documentation is committed only after successful checks on branch pushes. These changes improve release checks and do not alter statistical results.</p></li>
+<li><p>Changed implementation of <code><a href="../reference/GRIM_test.html">GRIM_test()</a></code> to more direct calculation rather than iterative check to increase transparency and efficiency. If requested to return the nearest possible means, the function now also correctly returns two values if there are two equidistant values. (For users wishing to use the original algorithm, it is presently retained as an <em>unexported</em> function that can be called with <code>rsprite2:::GRIM_test_old()</code>.)</p></li>
+<li><p>Changed implementation of <code><a href="../reference/GRIMMER_test.html">GRIMMER_test()</a></code> to account for the fact that multiple exact means may be compatible with the reported means, if the mean is reported to a lower precision than the standard deviation. The previous version missed some valid SDs in this rare case. Also optimised the implementation of the algorithm to catch special cases explicitly and run a lot faster.</p></li>
+<li><p>Added a <code><a href="../reference/boundary_test.html">boundary_test()</a></code> function that tests whether a standard deviation is within the possible range. This tests was already part of GRIMMER, but is now exported and separately documented for transparency. The underlying function to calculate SD limits now also accounts for various rounding choices for values ending in .5, i.e. up, down or to even, to reduce the risk of false positives, and is vectorised to increase speed.</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.2.1.9000" id="rsprite2-0219000">rsprite2 0.2.1.9000<a class="anchor" aria-label="anchor" href="#rsprite2-0219000"></a></h2>
@@ -61,11 +62,13 @@
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.2.1" id="rsprite2-021">rsprite2 0.2.1<small>2023-07-06</small><a class="anchor" aria-label="anchor" href="#rsprite2-021"></a></h2>
 <ul><li>
-<code><a href="../reference/GRIMMER_test.html">GRIMMER_test()</a></code> now supports multi-item scales, as Aurélien Allard kindly extended his algorithm</li></ul></div>
+<code><a href="../reference/GRIMMER_test.html">GRIMMER_test()</a></code> now supports multi-item scales, as Aurélien Allard kindly extended his algorithm</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.2.0" id="rsprite2-020">rsprite2 0.2.0<small>2022-09-27</small><a class="anchor" aria-label="anchor" href="#rsprite2-020"></a></h2>
 <ul><li>Added GRIMMER test (<code><a href="../reference/GRIMMER_test.html">GRIMMER_test()</a></code>) to catch impossible standard deviations, using the <a href="https://aurelienallard.netlify.app/post/anaytic-grimmer-possibility-standard-deviations/" class="external-link">algorithm developed by Aurélien Allard</a>
-</li></ul></div>
+</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.1.0" id="rsprite2-010">rsprite2 0.1.0<small>2021-09-22</small><a class="anchor" aria-label="anchor" href="#rsprite2-010"></a></h2>
 <ul><li>Ported SPRITE algorithm from <a href="https://github.com/sTeamTraen/rSPRITE" class="external-link">rSPRITE</a> 0.17 by Nick Brown</li>
@@ -77,7 +80,8 @@
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.0.0" id="rsprite2-000-known-limitations--tasks-for-future-development">rsprite2 0.0.0 Known limitations / tasks for future development<a class="anchor" aria-label="anchor" href="#rsprite2-000-known-limitations--tasks-for-future-development"></a></h2>
 <ul><li>
-<code>set_parameters</code> does not consider the restrictions provided when running the GRIM test. Doing so would help to catch some impossible restrictions at this stage.</li></ul></div>
+<code>set_parameters</code> does not consider the restrictions provided when running the GRIM test. Doing so would help to catch some impossible restrictions at this stage.</li>
+</ul></div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -92,7 +96,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer></div>
