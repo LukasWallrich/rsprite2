@@ -72,7 +72,8 @@ precision of the reported SD, this should only be a precursor to <code><a href="
 <span>  m_prec <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  sd_prec <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  n_items <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  return_range <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  return_range <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  quiet <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -118,12 +119,18 @@ Defaults to 1, which represents any single-item measure.</p></dd>
 <dt id="arg-return-range">return_range<a class="anchor" aria-label="anchor" href="#arg-return-range"></a></dt>
 <dd><p>(Optional) If <code>TRUE</code>, the function returns a numeric vector with the SD possible range.</p></dd>
 
+
+<dt id="arg-quiet">quiet<a class="anchor" aria-label="anchor" href="#arg-quiet"></a></dt>
+<dd><p>Suppress warnings.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>Logical <code>TRUE</code> if the standard deviation is within the possible
 range, and <code>FALSE</code> otherwise, unless <code>return_range</code>, in which case a
-numeric vector with the lower and upper bounds of the possible SD range is returned.</p>
+numeric vector with the lower and upper bounds of the possible SD range is returned.
+If the range is undefined, <code>return_range = TRUE</code> returns two numeric <code>NA</code> values.
+Scale endpoints must be integers; multi-item averages have spacing <code>1 / n_items</code>.</p>
     </div>
 
     <div id="ref-examples">

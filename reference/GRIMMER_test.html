@@ -71,7 +71,8 @@ extended by Aurélien Allard to support multi-item scales.</p>
 <span>  min_val <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  max_val <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  return_values <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  return_list <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  return_list <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  quiet <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -115,26 +116,42 @@ Defaults to 1, which represents any single-item measure.</p></dd>
 
 
 <dt id="arg-return-values">return_values<a class="anchor" aria-label="anchor" href="#arg-return-values"></a></dt>
-<dd><p>A logical value. <em>Ignored if <code>return_list = TRUE</code></em>.
-If <code>FALSE</code> (the default), the function returns a simple <code>TRUE</code> or <code>FALSE</code>. If <code>TRUE</code>, it returns a numeric
-vector of all possible unrounded standard deviations that are consistent - unless the precision/sample size ratio
-allows for all standard deviations within the possible range to be GRIMMER-consistent. In that case, a message
-is shown and an empty numeric vector is returned.</p></dd>
+<dd><p>A logical value, ignored if <code>return_list = TRUE</code>.
+If <code>TRUE</code>, return the unrounded SDs within the tested rounding interval
+that satisfy the GRIMMER arithmetic conditions. Otherwise return a logical verdict.</p></dd>
 
 
 <dt id="arg-return-list">return_list<a class="anchor" aria-label="anchor" href="#arg-return-list"></a></dt>
-<dd><p>A logical value. If <code>FALSE</code> (the default), the function's
-return type is determined by <code>return_values</code>. If <code>TRUE</code>, the function
-instead returns a list containing a logical <code>passed</code> flag
-and a numeric <code>values</code> vector.</p></dd>
+<dd><p>If <code>TRUE</code>, return a list with logical <code>passed</code> and numeric
+<code>values</code> components, irrespective of <code>return_values</code>.</p></dd>
+
+
+<dt id="arg-quiet">quiet<a class="anchor" aria-label="anchor" href="#arg-quiet"></a></dt>
+<dd><p>Suppress warnings.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>The return type depends on the arguments. By default, a logical scalar
-(<code>TRUE</code> or <code>FALSE</code>). If <code>return_values = TRUE</code>, a numeric vector is returned.
-If <code>return_list = TRUE</code>, a list is returned. An inconsistent result will yield
-<code>FALSE</code>, an empty numeric vector, or a list with <code>passed = FALSE</code>.</p>
+    <p>A logical scalar by default. With <code>return_values = TRUE</code>, a numeric
+vector of compatible unrounded SDs; an empty vector always means failure.
+With <code>return_list = TRUE</code>, a list with <code>passed</code> and <code>values</code> components.
+Candidate values satisfy the screening conditions and need not correspond
+to actual samples. Requests requiring more than one million candidates
+to be enumerated, or inputs beyond reliable integer arithmetic, stop
+with an informative error.</p>
+    </div>
+    <div id="details">
+    <h2>Details</h2>
+    <p>GRIMMER compatibility is a necessary condition for a sample to exist, not
+proof that a sample exists. The integer, parity, and minimum-variance
+conditions on sums of squares can pass even when no sample produces the
+reported statistics.
+Optional scale bounds add a range check but do not make the test sufficient.
+For example, two integer observations on a scale from 0 to 4 cannot have
+mean 2 and SD 2.0, although these statistics pass GRIMMER.</p>
+<p>Both endpoints of each reporting interval are accepted to accommodate
+different conventions for rounding ties. A reported SD of zero therefore
+also includes small positive SDs that round to zero.</p>
     </div>
     <div id="references">
     <h2>References</h2>

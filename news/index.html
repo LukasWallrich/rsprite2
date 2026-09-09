@@ -49,13 +49,30 @@
 
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.2.1.9002" id="rsprite2-0219002">rsprite2 0.2.1.9002<a class="anchor" aria-label="anchor" href="#rsprite2-0219002"></a></h2>
-<ul><li><p>Maintenance: fixed workflow syntax and enabled package checks on pull requests. Documentation is committed only after successful checks on branch pushes. These changes improve release checks and do not alter statistical results.</p></li>
-<li><p>Ordinary use: fixed distribution plots to retain complete endpoint bars and show exact response frequencies, including multi-item scales, gaps, and constant distributions. Empty search results now produce a clear plotting diagnostic.</p></li>
-<li><p>Rare-input hardening: for manually supplied data, invalid distribution vectors and scalar controls now produce clear errors; density plots reject distributions with fewer than two distinct responses.</p></li>
-<li><p>Changed implementation of <code><a href="../reference/GRIM_test.html">GRIM_test()</a></code> to more direct calculation rather than iterative check to increase transparency and efficiency. If requested to return the nearest possible means, the function now also correctly returns two values if there are two equidistant values. (For users wishing to use the original algorithm, it is presently retained as an <em>unexported</em> function that can be called with <code>rsprite2:::GRIM_test_old()</code>.)</p></li>
-<li><p>Changed implementation of <code><a href="../reference/GRIMMER_test.html">GRIMMER_test()</a></code> to account for the fact that multiple exact means may be compatible with the reported means, if the mean is reported to a lower precision than the standard deviation. The previous version missed some valid SDs in this rare case. Also optimised the implementation of the algorithm to catch special cases explicitly and run a lot faster.</p></li>
-<li><p>Added a <code><a href="../reference/boundary_test.html">boundary_test()</a></code> function that tests whether a standard deviation is within the possible range. This tests was already part of GRIMMER, but is now exported and separately documented for transparency. The underlying function to calculate SD limits now also accounts for various rounding choices for values ending in .5, i.e. up, down or to even, to reduce the risk of false positives, and is vectorised to increase speed.</p></li>
+<div class="section level3">
+<h3 id="fixes-affecting-ordinary-use-0-2-1-9002">Fixes affecting ordinary use<a class="anchor" aria-label="anchor" href="#fixes-affecting-ordinary-use-0-2-1-9002"></a></h3>
+<ul><li>Fixed distribution plots to retain complete endpoint bars and show exact response frequencies, including multi-item scales, gaps, and constant distributions. Empty search results now produce a clear plotting diagnostic.</li>
+<li>Corrected inferred precision for negative numbers and scientific notation, and infer SD precision from the SD in boundary checks. Rounded zero SDs and multi-item constant samples now pass GRIMMER when compatible. Floating-point tolerance also prevents false rejection at sum-of-squares boundaries on ordinary multi-item scales.</li>
+<li>GRIMMER now consistently honours its return modes and returns compatible SD candidates for the tested interval. Empty candidate vectors always indicate failure. Added <code>quiet</code> controls and clarified that passing this screening test does not prove that a sample exists.</li>
+<li>Corrected GRIM’s nearest reported means, including ties, and avoid enumerating candidates for logical-only GRIM checks.</li>
 </ul></div>
+<div class="section level3">
+<h3 id="edge-cases-and-input-hardening-0-2-1-9002">Edge cases and input hardening<a class="anchor" aria-label="anchor" href="#edge-cases-and-input-hardening-0-2-1-9002"></a></h3>
+<ul><li>For manually supplied data, invalid distribution vectors and scalar controls now produce clear errors; density plots reject distributions with fewer than two distinct responses.</li>
+<li>Stabilised SD bounds and GRIMMER calculations for scales with unusually large offsets.</li>
+<li>Validate finite statistics, positive counts, scalar flags, explicit precisions, and ordered integer scale bounds. Undefined boundary ranges consistently return two numeric missing values when requested. Extremely large arithmetic or candidate enumerations now fail explicitly.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="maintenance-0-2-1-9002">Maintenance<a class="anchor" aria-label="anchor" href="#maintenance-0-2-1-9002"></a></h3>
+<ul><li>Fixed workflow syntax and enabled package checks on pull requests. Documentation is committed only after successful checks on branch pushes. These changes improve release checks and do not alter statistical results.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="earlier-development-changes-0-2-1-9002">Earlier development changes<a class="anchor" aria-label="anchor" href="#earlier-development-changes-0-2-1-9002"></a></h3>
+<ul><li>Changed implementation of <code><a href="../reference/GRIM_test.html">GRIM_test()</a></code> to more direct calculation rather than iterative check to increase transparency and efficiency. If requested to return the nearest possible means, the function now also correctly returns two values if there are two equidistant values. (For users wishing to use the original algorithm, it is presently retained as an <em>unexported</em> function that can be called with <code>rsprite2:::GRIM_test_old()</code>.)</li>
+<li>Changed implementation of <code><a href="../reference/GRIMMER_test.html">GRIMMER_test()</a></code> to account for the fact that multiple exact means may be compatible with the reported means, if the mean is reported to a lower precision than the standard deviation. The previous version missed some valid SDs in this rare case. Also optimised the implementation of the algorithm to catch special cases explicitly and run a lot faster.</li>
+<li>Added a <code><a href="../reference/boundary_test.html">boundary_test()</a></code> function that tests whether a standard deviation is within the possible range. This tests was already part of GRIMMER, but is now exported and separately documented for transparency. The underlying function to calculate SD limits now also accounts for various rounding choices for values ending in .5, i.e. up, down or to even, to reduce the risk of false positives, and is vectorised to increase speed.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.2.1.9000" id="rsprite2-0219000">rsprite2 0.2.1.9000<a class="anchor" aria-label="anchor" href="#rsprite2-0219000"></a></h2>
 <ul><li>Bug fixed in the boundary test, ensuring that SD limits are calculated correctly even when the mean is on (or very near) the scale limits.</li>

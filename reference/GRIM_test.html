@@ -117,6 +117,13 @@ and a numeric vector <code>values</code> containing the relevant means.</p></dd>
 (<code>TRUE</code> or <code>FALSE</code>). If <code>return_values = TRUE</code>, a numeric vector is returned.
 If <code>return_list = TRUE</code>, a list is returned.</p>
     </div>
+    <div id="details">
+    <h2>Details</h2>
+    <p>Logical-only requests compare interval endpoints without enumerating
+possible means. Value and list requests stop if more than one million
+candidates would need enumeration. Inputs beyond reliable integer
+arithmetic also stop with an informative error.</p>
+    </div>
     <div id="references">
     <h2>References</h2>
     <p>Brown NJ, Heathers JA (2017).
@@ -132,7 +139,7 @@ If <code>return_list = TRUE</code>, a list is returned.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># To find the closest possible mean, set return_values to TRUE</span></span></span>
 <span class="r-in"><span><span class="fu">GRIM_test</span><span class="op">(</span>mean <span class="op">=</span> <span class="fl">5.19</span>, n_obs <span class="op">=</span> <span class="fl">28</span>, return_values <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Mean 5.19 fails GRIM test - closest consistent value: 5.18</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Mean 5.19 fails GRIM test - closest consistent value(s): 5.18</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 5.18</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># To get a detailed list containing both the logical result and the values</span></span></span>
