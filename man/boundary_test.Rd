@@ -13,7 +13,8 @@ boundary_test(
   m_prec = NULL,
   sd_prec = NULL,
   n_items = 1,
-  return_range = FALSE
+  return_range = FALSE,
+  quiet = FALSE
 )
 }
 \arguments{
@@ -37,11 +38,15 @@ reported standard deviation ends in 0.}
 Defaults to 1, which represents any single-item measure.}
 
 \item{return_range}{(Optional) If \code{TRUE}, the function returns a numeric vector with the SD possible range.}
+
+\item{quiet}{Suppress warnings.}
 }
 \value{
 Logical \code{TRUE} if the standard deviation is within the possible
 range, and \code{FALSE} otherwise, unless \code{return_range}, in which case a
 numeric vector with the lower and upper bounds of the possible SD range is returned.
+If the range is undefined, \code{return_range = TRUE} returns two numeric \code{NA} values.
+Scale endpoints must be integers; multi-item averages have spacing \code{1 / n_items}.
 }
 \description{
 This function tests whether a given standard deviation is within the range that is

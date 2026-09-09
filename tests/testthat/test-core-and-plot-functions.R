@@ -63,7 +63,7 @@ test_that("GRIMMER works as expected", {
   # Returns list on success
   expect_equal(
     GRIMMER_test(5.21, 1.6, 28, return_list = TRUE),
-    list(passed = TRUE, values = numeric(0))
+    list(passed = TRUE, values = sqrt((seq(828, 834, 2) - 146^2 / 28) / 27))
   )
   # n_obs < 2 (SD is undefined)
   expect_warning(

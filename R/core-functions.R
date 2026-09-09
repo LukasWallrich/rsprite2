@@ -597,6 +597,11 @@ find_possible_distribution <- function(parameters, seed = NULL, values_only = FA
 #'   and a numeric vector `values` containing the relevant means.
 #' @param quiet Suppress warnings.
 #'
+#' @details Logical-only requests compare interval endpoints without enumerating
+#'   possible means. Value and list requests stop if more than one million
+#'   candidates would need enumeration. Inputs beyond reliable integer
+#'   arithmetic also stop with an informative error.
+#'
 #' @return The return type depends on the arguments. By default, a logical scalar
 #'   (`TRUE` or `FALSE`). If `return_values = TRUE`, a numeric vector is returned.
 #'   If `return_list = TRUE`, a list is returned.
@@ -618,83 +623,44 @@ find_possible_distribution <- function(parameters, seed = NULL, values_only = FA
 
 GRIM_test <- function(mean, n_obs, m_prec = NULL, n_items = 1,
                       return_values = FALSE, return_list = FALSE, quiet = FALSE) {
-
-  # --- Parameter validation and setup ---
-  if (is.null(m_prec)) {
-    m_prec <- max(nchar(sub("^[0-9]*", "", mean)) - 1, 0)
-  }
-
-  assert_count(m_prec)
-  assert_count(n_obs)
-  assert_count(n_items)
-  assert_logical(return_values)
-  assert_logical(return_list)
-  assert_number(mean)
-
+  assert_number(mean, finite = TRUE)
+  assert_count(n_obs, positive = TRUE)
+  assert_count(n_items, positive = TRUE)
+  assert_flag(return_values)
+  assert_flag(return_list)
+  assert_flag(quiet)
+  if (is.null(m_prec)) m_prec <- .infer_prec(mean)
+  .assert_reported(mean, m_prec, "mean")
   effective_n <- n_obs * n_items
+  .assert_exact_integer(c(effective_n, mean * effective_n))
 
-  if (effective_n > 10^m_prec & !quiet) {
+  if (effective_n > 10^m_prec && !quiet) {
     warning("The sample size (* number of items) is too big compared to the precision of the reported mean. The GRIM test is only meaningful when N < 10 ^ precision (e.g. N < 100 for single-items means reported to two decimal places).")
   }
 
-  # --- Direct calculation of all possible integer sums ---
-  granule_mean <- 0.5 * 10^-m_prec
-  sum_lower_bound <- (mean - granule_mean - rSprite.dust) * effective_n
-  sum_upper_bound <- (mean + granule_mean + rSprite.dust) * effective_n
+  offset <- floor(mean)
+  centred_mean <- round(mean - offset, m_prec)
+  half_step <- 0.5 * 10^-m_prec
+  lower <- ceiling((centred_mean - half_step - rSprite.dust) * effective_n)
+  upper <- floor((centred_mean + half_step + rSprite.dust) * effective_n)
+  .assert_exact_integer(c(lower, upper))
+  passed <- lower <= upper
+  if (!return_values && !return_list) return(passed)
 
-  final_lower <- ceiling(sum_lower_bound)
-  final_upper <- floor(sum_upper_bound)
-
-  possible_realsums <- if (final_lower > final_upper) {
-    numeric(0)
+  if (passed) {
+    values <- offset + .integer_sequence(lower, upper) / effective_n
   } else {
-    final_lower:final_upper
-  }
-
-  test_passed <- length(possible_realsums) > 0
-
-  output_values <- if (!test_passed & (return_values | return_list)) {
-    # Test failed: determine the closest mean(s)
-    ideal_sum <- mean * effective_n
-    if (abs((ideal_sum %% 1) - 0.5) < rSprite.dust) {
-      # Equidistant case: two closest sums
-      lower_int <- floor(ideal_sum)
-      upper_int <- ceiling(ideal_sum)
-      round(c(lower_int / effective_n, upper_int / effective_n), m_prec)
-    } else {
-      # Standard case: one closest sum
-      int <- round(ideal_sum)
-      round(int / effective_n, m_prec)
-    }
-  } else {
-    # Test passed: all possible means
-    possible_realsums / effective_n
-  }
-
-  # --- Format output based on arguments ---
-
-  if (return_list) {
-    return(list(passed = test_passed, values = output_values))
-  }
-
-  if (!return_values) {
-    return(test_passed)
-  }
-
-  # For user calls requesting values: issue warnings on failure
-  if (!test_passed) {
-    prec_format <- paste("%.", m_prec, "f", sep = "")
-    if (length(output_values) > 1 & !quiet) {
-      warning("Mean ", sprintf(prec_format, mean), " fails GRIM test. Two equally close consistent values exist: ",
-              sprintf(prec_format, output_values[1]), " and ", sprintf(prec_format, output_values[2]))
-    } else {
-      if (!quiet)
-         warning("Mean ", sprintf(prec_format, mean), " fails GRIM test - closest consistent value: ",
-                 sprintf(prec_format, output_values))
+    neighbours <- c(floor(centred_mean * effective_n), ceiling(centred_mean * effective_n)) / effective_n
+    candidates <- sort(unique(c(round_down(neighbours, m_prec), round_up(neighbours, m_prec))))
+    distances <- abs(candidates - centred_mean)
+    values <- offset + candidates[abs(distances - min(distances)) < rSprite.dust]
+    if (!quiet && !return_list) {
+      warning("Mean ", mean, " fails GRIM test - closest consistent value(s): ",
+              paste(values, collapse = ", "))
     }
   }
-
-  return(output_values)
+  if (return_list) return(list(passed = passed, values = values))
+  values
 }
 
 GRIM_test_old <- function(mean, n_obs, m_prec = NULL, n_items = 1, return_values = FALSE, ...) {
@@ -702,14 +668,14 @@ GRIM_test_old <- function(mean, n_obs, m_prec = NULL, n_items = 1, return_values
   if ("return_list" %in% names(list(...))) stop("`return_list` argument is only implemented in the new `GRIM_test` function.")
 
   if (is.null(m_prec)) {
-    m_prec <- max(nchar(sub("^[0-9]*", "", mean)) - 1, 0)
+    m_prec <- .infer_prec(mean)
   }
 
   assert_count(m_prec)
-  assert_count(n_obs)
-  assert_count(n_items)
-  assert_logical(return_values)
-  assert_number(mean)
+  assert_count(n_obs, positive = TRUE)
+  assert_count(n_items, positive = TRUE)
+  assert_flag(return_values)
+  assert_number(mean, finite = TRUE)
 
   if (n_obs * n_items > 10 ^ m_prec) {
     warning("The sample size (x number of items) is too big compared to the precision of the reported mean. The GRIM test is only meaningful when N < 10 ^ precision (e.g. N < 100 for means reported to two decimal places).")
@@ -775,92 +741,48 @@ round_up <- function(number, decimals, tolerance = rSprite.dust) {
 
 # Closed-interval SD limits --------------------------------------------
 .sd_limits <- function(n_obs, mean, min_val, max_val,
-                          m_prec = NULL, sd_prec = NULL,
-                          n_items = 1, quiet = FALSE,
-                          tol = rSprite.dust) {
-
-  if (!GRIM_test(mean, n_obs, m_prec = m_prec,
-                 n_items = n_items, quiet = quiet)) {
-    warning("`GRIM_test` failed, so no range for SDs can be calculated.")
+                       m_prec = NULL, sd_prec = NULL,
+                       n_items = 1, quiet = FALSE, tol = rSprite.dust) {
+  if (is.null(m_prec)) m_prec <- .infer_prec(mean)
+  if (is.null(sd_prec)) sd_prec <- m_prec
+  if (!GRIM_test(mean, n_obs, m_prec, n_items, quiet = quiet)) {
+    if (!quiet) warning("`GRIM_test` failed, so no range for SDs can be calculated.")
+    return(c(NA_real_, NA_real_))
+  }
+  if (n_obs == 1) {
+    if (!quiet) warning("SD undefined for single observation")
     return(c(NA_real_, NA_real_))
   }
 
-  if (is.null(m_prec))  m_prec  <- max(nchar(sub("^[0-9]*", "", mean)) - 1, 0)
-  if (is.null(sd_prec)) sd_prec <- max(nchar(sub("^[0-9]*", "", mean)) - 1, 0)
-  if (min_val == max_val) return(c(0, 0))
-  if (n_obs == 1) {
-    warning("SD undefined for single observation")
-    return(c(NA, NA))
-  }
+  # Translate the scale before taking squares, preserving the integer lattice.
+  width <- (max_val - min_val) * n_items
+  centre <- round(mean - min_val, m_prec) * n_obs * n_items
+  radius <- (0.5 * 10^-m_prec + tol) * n_obs * n_items
+  .assert_exact_integer(c(width, n_obs * width, centre))
+  totals <- .integer_sequence(max(0, ceiling(centre - radius)),
+                             min(n_obs * width, floor(centre + radius)))
+  if (!length(totals)) return(c(NA_real_, NA_real_))
+  if (width == 0) return(c(0, 0))
 
-  half_step <- 0.5 * 10^-m_prec
-  S         <- n_obs * n_items
-  totals    <- seq(ceiling((mean - half_step - tol) * S),
-                   floor  ((mean + half_step + tol) * S))
-
-  total_scores <- totals / n_items
-  mu_vec       <- total_scores / n_obs
-
-  ## minimise SD --------------------------------------------------------
-  a_min  <- floor(mu_vec * n_items) / n_items
-  b_min  <- pmin(a_min + 1 / n_items, max_val)
-
-  same_ab_min <- abs(a_min - b_min) < tol
-  k_raw_min <- ifelse(same_ab_min, 0, (total_scores - n_obs * b_min) / (a_min - b_min))
-  k_int_min   <- round(k_raw_min)
-
-  ok_min <- !same_ab_min &                      # integer count
-    abs(k_raw_min - k_int_min) < tol &
-    k_int_min >= 0 & k_int_min <= n_obs
-
-  ss_min <- rep(NA_real_, length(totals))       # NA for impossible totals
-  ss_min[same_ab_min] <- n_obs * a_min[same_ab_min]^2
-  ss_min[ok_min]      <- k_int_min[ok_min]           * a_min[ok_min]^2 +
-    (n_obs - k_int_min[ok_min]) * b_min[ok_min]^2
-
-
-  ## maximise SD --------------------------------------------------------
-  a_max <- min_val
-  b_max <- max_val
-
-  k_raw_max <- (total_scores - n_obs * b_max) / (a_max - b_max)
-  k_int_max <- round(k_raw_max)
-  diff_max  <- total_scores - (k_int_max * a_max +
-                                 (n_obs - k_int_max) * b_max)
-  valid_exact <- abs(diff_max) < tol &
-    k_int_max >= 0 & k_int_max <= n_obs
-
-  step      <- 1 / n_items
-  can_patch <- !valid_exact &
-    abs(diff_max) <= (b_max - a_max) &
-    abs(diff_max / step - round(diff_max / step)) < tol &
-    k_int_max >= 0 & k_int_max <= n_obs
-
-  replacement <- ifelse(diff_max > 0,
-                        a_max + diff_max,
-                        b_max + diff_max)           # only used when can_patch
-
-  base_ss <- k_int_max * a_max^2 + (n_obs - k_int_max) * b_max^2
-  patch_ss <- base_ss -
-    ifelse(diff_max > 0, a_max^2, b_max^2) +
-    replacement^2
-
-  ss_max <- ifelse(valid_exact, base_ss,
-                   ifelse(can_patch, patch_ss, NA_real_))
-
-  ## variance & SD ------------------------------------------------------
-  var_from_ss <- function(ss, sum_scores, n)
-    pmax((ss - sum_scores^2 / n) / (n - 1), 0)
-
-  min_sd <- sqrt(min(var_from_ss(ss_min,  total_scores, n_obs), na.rm = TRUE))
-  max_sd <- sqrt(max(var_from_ss(ss_max,  total_scores, n_obs), na.rm = TRUE))
-
-  if (is.infinite(min_sd) || is.infinite(max_sd)) {
+  # A minimum-variance sample uses adjacent lattice points. A maximum uses
+  # the endpoints with at most one interior response. Centre each expression
+  # on its exact mean to avoid subtracting nearly equal sums of squares.
+  k <- totals %% n_obs
+  minimum_variance <- k * (n_obs - k) / n_obs / (n_obs - 1) / n_items^2
+  high_count <- floor(totals / width)
+  remainder <- totals - high_count * width
+  interior_count <- as.numeric(remainder > 0)
+  low_count <- n_obs - high_count - interior_count
+  exact_mean <- totals / n_obs
+  maximum_variance <- (high_count * (width - exact_mean)^2 +
+    low_count * exact_mean^2 + interior_count * (remainder - exact_mean)^2) /
+    (n_obs - 1) / n_items^2
+  limits <- c(sqrt(min(minimum_variance)), sqrt(max(maximum_variance)))
+  if (any(!is.finite(limits))) {
     if (!quiet) warning("Error in calculating range of possible standard deviations.")
     return(c(NA_real_, NA_real_))
   }
-
-  c(round_down(min_sd, sd_prec), round_up(max_sd, sd_prec))
+  c(round_down(limits[1], sd_prec), round_up(limits[2], sd_prec))
 }
 
 #' Boundary test for standard deviation
@@ -873,11 +795,14 @@ round_up <- function(number, decimals, tolerance = rSprite.dust) {
 #' precision of the reported SD, this should only be a precursor to `GRIMMER_test()`
 #'
 #' @inheritParams set_parameters
+#' @param quiet Suppress warnings.
 #' @param return_range (Optional) If `TRUE`, the function returns a numeric vector with the SD possible range.
 #'
 #' @return Logical `TRUE` if the standard deviation is within the possible
 #'   range, and `FALSE` otherwise, unless `return_range`, in which case a
 #'   numeric vector with the lower and upper bounds of the possible SD range is returned.
+#'   If the range is undefined, `return_range = TRUE` returns two numeric `NA` values.
+#'   Scale endpoints must be integers; multi-item averages have spacing `1 / n_items`.
 #' @export
 #'
 #' @examples
@@ -888,47 +813,33 @@ round_up <- function(number, decimals, tolerance = rSprite.dust) {
 #' boundary_test(sd = 3.5, n_obs = 20, mean = 4, min_val = 1, max_val = 7)
 
 boundary_test <- function(sd, n_obs, mean, min_val, max_val,
-                          m_prec = NULL, sd_prec = NULL, n_items = 1, return_range = FALSE) {
-
-  # --- Input validation ---
-  assert_number(sd, lower = 0)
+                          m_prec = NULL, sd_prec = NULL, n_items = 1,
+                          return_range = FALSE, quiet = FALSE) {
+  assert_number(sd, lower = 0, finite = TRUE)
   assert_count(n_obs, positive = TRUE)
-  assert_number(mean)
-  assert_number(min_val)
-  assert_number(max_val)
-  assert_count(sd_prec, null.ok = TRUE)
+  assert_number(mean, finite = TRUE)
+  assert_int(min_val)
+  assert_int(max_val, lower = min_val)
   assert_count(n_items, positive = TRUE)
-  assert_logical(return_range)
+  assert_flag(return_range)
+  assert_flag(quiet)
+  if (is.null(m_prec)) m_prec <- .infer_prec(mean)
+  if (is.null(sd_prec)) sd_prec <- .infer_prec(sd)
+  .assert_reported(mean, m_prec, "mean")
+  .assert_reported(sd, sd_prec, "sd")
 
   if (mean < min_val || mean > max_val) {
-    warning("The mean is outside the possible scale range (min_val to max_val).")
-    return(FALSE)
+    if (!quiet) warning("The mean is outside the possible scale range (min_val to max_val).")
+    return(if (return_range) c(NA_real_, NA_real_) else FALSE)
   }
-
-  # --- Calculate the possible SD range ---
-  sd_range <- .sd_limits(
-    n_obs = n_obs,
-    mean = mean,
-    min_val = min_val,
-    max_val = max_val,
-    m_prec = m_prec,
-    sd_prec = sd_prec,
-    n_items = n_items,
-    quiet = TRUE
-  )
-
-  # --- Check for errors during range calculation ---
-  if (anyNA(sd_range)) {
-    return(FALSE)
-  }
-
-  if (return_range) {
-    return(sd_range)
-  }
-
-  # --- Perform the boundary test ---
-  (sd >= (sd_range[1] - rSprite.dust)) && (sd <= (sd_range[2] + rSprite.dust))
-
+  # Internal calls suppress the low-information granularity warning; failures
+  # still receive a public diagnostic unless the caller requests quiet output.
+  sd_range <- .sd_limits(n_obs, mean, min_val, max_val, m_prec, sd_prec,
+                         n_items, quiet = TRUE)
+  if (anyNA(sd_range) && !quiet) warning("No SD range is defined for the supplied mean and sample size.")
+  if (return_range) return(sd_range)
+  if (anyNA(sd_range)) return(FALSE)
+  sd >= sd_range[1] - rSprite.dust && sd <= sd_range[2] + rSprite.dust
 }
 
 #' GRIMMER test for standard deviation
@@ -942,20 +853,33 @@ boundary_test <- function(sd, n_obs, mean, min_val, max_val,
 #' @inheritParams set_parameters
 #' @param min_val (Optional) Scale minimum. If provided alongside max_val, the function checks whether the SD is consistent with that range.
 #' @param max_val (Optional) Scale maximum.
-#' @param return_values A logical value. *Ignored if `return_list = TRUE`*.
-#'  If `FALSE` (the default), the function returns a simple `TRUE` or `FALSE`. If `TRUE`, it returns a numeric
-#'  vector of all possible unrounded standard deviations that are consistent - unless the precision/sample size ratio
-#'  allows for all standard deviations within the possible range to be GRIMMER-consistent. In that case, a message
-#'  is shown and an empty numeric vector is returned.
-#' @param return_list A logical value. If `FALSE` (the default), the function's
-#'  return type is determined by `return_values`. If `TRUE`, the function
-#'  instead returns a list containing a logical `passed` flag
-#'  and a numeric `values` vector.
+#' @param return_values A logical value, ignored if `return_list = TRUE`.
+#'   If `TRUE`, return the unrounded SDs within the tested rounding interval
+#'   that satisfy the GRIMMER arithmetic conditions. Otherwise return a logical verdict.
+#' @param return_list If `TRUE`, return a list with logical `passed` and numeric
+#'   `values` components, irrespective of `return_values`.
+#' @param quiet Suppress warnings.
 #'
-#' @return The return type depends on the arguments. By default, a logical scalar
-#'  (`TRUE` or `FALSE`). If `return_values = TRUE`, a numeric vector is returned.
-#'  If `return_list = TRUE`, a list is returned. An inconsistent result will yield
-#'  `FALSE`, an empty numeric vector, or a list with `passed = FALSE`.
+#' @details
+#' GRIMMER compatibility is a necessary condition for a sample to exist, not
+#' proof that a sample exists. The integer, parity, and minimum-variance
+#' conditions on sums of squares can pass even when no sample produces the
+#' reported statistics.
+#' Optional scale bounds add a range check but do not make the test sufficient.
+#' For example, two integer observations on a scale from 0 to 4 cannot have
+#' mean 2 and SD 2.0, although these statistics pass GRIMMER.
+#'
+#' Both endpoints of each reporting interval are accepted to accommodate
+#' different conventions for rounding ties. A reported SD of zero therefore
+#' also includes small positive SDs that round to zero.
+#'
+#' @return A logical scalar by default. With `return_values = TRUE`, a numeric
+#'   vector of compatible unrounded SDs; an empty vector always means failure.
+#'   With `return_list = TRUE`, a list with `passed` and `values` components.
+#'   Candidate values satisfy the screening conditions and need not correspond
+#'   to actual samples. Requests requiring more than one million candidates
+#'   to be enumerated, or inputs beyond reliable integer arithmetic, stop
+#'   with an informative error.
 #' @export
 #'
 #' @examples
@@ -971,127 +895,88 @@ boundary_test <- function(sd, n_obs, mean, min_val, max_val,
 
 GRIMMER_test <- function(mean, sd, n_obs, m_prec = NULL, sd_prec = NULL,
                          n_items = 1, min_val = NULL, max_val = NULL,
-                         return_values = FALSE, return_list = FALSE) {
-
-  # --- Step 0: Input Validation and Edge Cases ---
+                         return_values = FALSE, return_list = FALSE, quiet = FALSE) {
+  assert_number(mean, finite = TRUE)
+  assert_number(sd, lower = 0, finite = TRUE)
+  assert_count(n_obs, positive = TRUE)
+  assert_count(n_items, positive = TRUE)
   assert_int(min_val, null.ok = TRUE)
   assert_int(max_val, null.ok = TRUE)
-  assert_count(m_prec, null.ok = TRUE)
-  assert_count(sd_prec, null.ok = TRUE)
-  assert_count(n_obs)
-  assert_count(n_items)
-  assert_number(mean)
-  assert_number(sd)
+  if (xor(is.null(min_val), is.null(max_val))) stop("Supply both `min_val` and `max_val`, or neither.")
+  if (!is.null(min_val)) assert_int(max_val, lower = min_val)
+  assert_flag(return_values)
+  assert_flag(return_list)
+  assert_flag(quiet)
+  if (is.null(m_prec)) m_prec <- .infer_prec(mean)
+  if (is.null(sd_prec)) sd_prec <- .infer_prec(sd)
+  .assert_reported(mean, m_prec, "mean")
+  .assert_reported(sd, sd_prec, "sd")
 
-  if (n_obs < 2) {
-    warning("With a single observation, SD is undefined. Returning FALSE.")
-    if (return_list) return(list(passed = FALSE, values = numeric(0)))
-    return(if (return_values) numeric(0) else FALSE)
+  result <- function(passed, values = numeric(0)) {
+    if (return_list) return(list(passed = passed, values = values))
+    if (return_values) return(values)
+    passed
+  }
+  if (n_obs == 1) {
+    if (!quiet) warning("With a single observation, SD is undefined. Returning FALSE.")
+    return(result(FALSE))
+  }
+  if (!GRIM_test(mean, n_obs, m_prec, n_items, quiet = quiet)) {
+    if (!quiet) warning("GRIM test failed - so GRIMMER also fails.")
+    return(result(FALSE))
+  }
+  if (!is.null(min_val) && !boundary_test(sd, n_obs, mean, min_val, max_val,
+                                        m_prec, sd_prec, n_items, quiet = TRUE)) {
+    return(result(FALSE))
   }
 
-  # --- Step 1a: Call GRIM_test to check and get possible means ---
-  grim_result <- GRIM_test(mean = mean, n_obs = n_obs, m_prec = m_prec, n_items = n_items, return_list = TRUE)
-
-  if (!grim_result$passed) {
-    warning("GRIM test failed - so GRIMMER also fails.")
-    if (return_list) return(list(passed = FALSE, values = numeric(0)))
-    return(if (return_values) numeric(0) else FALSE)
-  }
-
-  possible_means <- grim_result$values
-
-  # --- Step 1b: Call boundary_test to see whether mean and SD are within possible range (if range is provided)
-  if (!is.null(min_val) && !is.null(max_val) &&
-    !boundary_test(sd = sd, n_obs = n_obs, mean = mean, min_val = min_val,
-                     max_val = max_val, m_prec = m_prec, sd_prec = sd_prec, n_items = n_items)) {
-    return(FALSE)
-  }
-
-  # --- Step 2: Setup (constants, helpers, boundary checks) ---
-  if (is.null(sd_prec)) {
-    sd_prec <- max(nchar(sub("^[0-9]*", "", as.character(sd))) - 1, 0)
-  }
-
+  # Subtract an integer response offset before computing sums of squares.
+  # Integer translation preserves the parity constraint and avoids cancellation
+  # when the input scale has a large offset.
+  offset <- floor(mean)
+  centred_mean <- round(mean - offset, m_prec)
   effective_n <- n_obs * n_items
-
-  granule_sd <- 5 / (10^(sd_prec + 1))
-  Lsigma <- ifelse(sd < granule_sd, 0, sd - granule_sd)
-  Usigma <- sd + granule_sd
-
-  test_passed <- FALSE
-  consistent_sds <- numeric(0)
-
-  # Check if the SD is zero, which is a special case
-  .on_lattice <- function(mean, n_items, tol = rSprite.dust) {
-    abs(mean * n_items - round(mean * n_items)) < tol
+  half_mean <- 0.5 * 10^-m_prec + rSprite.dust
+  totals <- .integer_sequence(ceiling((centred_mean - half_mean) * effective_n),
+                              floor((centred_mean + half_mean) * effective_n))
+  half_sd <- 0.5 * 10^-sd_prec
+  lower_sd <- max(0, sd - half_sd)
+  upper_sd <- sd + half_sd
+  values <- list()
+  candidate_count <- 0
+  for (total in totals) {
+    squared_mean <- total^2 / n_obs
+    lower_ss <- (n_obs - 1) * (lower_sd * n_items)^2 + squared_mean
+    upper_ss <- (n_obs - 1) * (upper_sd * n_items)^2 + squared_mean
+    .assert_exact_integer(c(total, lower_ss, upper_ss))
+    tolerance <- max(rSprite.dust, 8 * .Machine$double.eps * max(lower_ss, upper_ss))
+    lower <- ceiling(lower_ss - tolerance)
+    upper <- floor(upper_ss + tolerance)
+    # For this total, adjacent integer item sums give the smallest possible
+    # sum of squares. This also rules out zero SD for off-lattice means.
+    q <- floor(total / n_obs)
+    k <- total - q * n_obs
+    minimum_ss <- (n_obs - k) * q^2 + k * (q + 1)^2
+    lower <- max(lower, minimum_ss)
+    lower <- lower + ((round(total) - lower) %% 2)
+    if (lower > upper) next
+    # Apply the same SD rounding check in every return mode. At an integer
+    # boundary, the sum-of-squares tolerance can include a candidate just
+    # outside the SD interval, particularly when the SD is close to zero.
+    first_sd <- sqrt(max(0, (lower - squared_mean) / (n_obs - 1))) / n_items
+    if (first_sd < lower_sd - rSprite.dust) lower <- lower + 2
+    if (lower > upper) next
+    first_sd <- sqrt(max(0, (lower - squared_mean) / (n_obs - 1))) / n_items
+    if (!.rounding_compatible(first_sd, sd, sd_prec)) next
+    if (!return_values && !return_list) return(result(TRUE))
+    candidate_count <- candidate_count + floor((upper - lower) / 2) + 1
+    .assert_candidate_count(candidate_count)
+    sums_of_squares <- .integer_sequence(lower, upper, by = 2)
+    candidate_sd <- sqrt(pmax(0, (sums_of_squares - squared_mean) /
+                                  (n_obs - 1))) / n_items
+    matches <- .rounding_compatible(candidate_sd, sd, sd_prec)
+    values[[length(values) + 1L]] <- candidate_sd[matches]
   }
-
-
-  if (.equalish(sd, 0)) {
-    valid_zero <- .on_lattice(mean, n_items)
-    if (!valid_zero) {
-      warning("SD of 0 is not possible with the given mean and number of items.")
-      if (return_list) return(list(passed = valid_zero, values = numeric(0)))
-      return(valid_zero)
-    } else {
-    if (return_list) return(list(passed = valid_zero, values = 0))
-    return(valid_zero)
-  }
-  }
-
-
-  # --- Step 3: Loop through each valid mean ---
-  for (realmean in possible_means) {
-    realsum <- realmean * effective_n
-    lower_bound_ss <- ((n_obs - 1) * Lsigma^2 + n_obs * realmean^2) * n_items^2
-    upper_bound_ss <- ((n_obs - 1) * Usigma^2 + n_obs * realmean^2) * n_items^2
-
-    if (ceiling(lower_bound_ss) > floor(upper_bound_ss)) next
-
-    window <- floor(upper_bound_ss) - ceiling(lower_bound_ss)
-    if (window >= 1) {                   # at least one integer of each parity exists
-      if (return_list) return(list(passed = TRUE, values = numeric(0)))
-      if (return_values) {
-        sd_range <- boundary_test(sd = sd, n_obs = n_obs, mean = mean, min_val = min_val,
-                      max_val = max_val, m_prec = m_prec, sd_prec = sd_prec, n_items = n_items, return_range = TRUE)
-        message("With the given precision, any SD within the range [", sd_range[1], ", ", sd_range[2], "] is GRIMMER compatible")
-        return(numeric(0))
-      }
-      return(TRUE)
-    }
-
-    possible_ss <- ceiling(lower_bound_ss):floor(upper_bound_ss)
-    possible_ss <- possible_ss[possible_ss %% 2 == round(realsum) %% 2] #round() used to remove floating point issues
-
-    if (length(possible_ss) == 0) next
-
-    Predicted_Variance <- (possible_ss / n_items^2 - n_obs * realmean^2) / (n_obs - 1)
-    Predicted_Variance[Predicted_Variance < 0] <- 0
-    Predicted_SD <- sqrt(Predicted_Variance)
-
-    matches <- .equalish(round_down(Predicted_SD, sd_prec), sd) | .equalish(round_up(Predicted_SD, sd_prec), sd)
-
-    if (any(matches)) {
-      test_passed <- TRUE
-      if (return_values || return_list) {
-        consistent_sds <- c(consistent_sds, Predicted_SD[matches])
-      } else {
-        return(TRUE)
-      }
-    }
-  }
-
-  # --- Step 4: Format and return output ---
-  output_values <- sort(unique(consistent_sds))
-
-  if (return_list) {
-    return(list(passed = test_passed, values = output_values))
-  }
-  if (return_values) {
-    return(output_values)
-  }
-
-  return(test_passed)
+  values <- sort(unique(as.numeric(unlist(values, use.names = FALSE))))
+  result(length(values) > 0, values)
 }
-
-

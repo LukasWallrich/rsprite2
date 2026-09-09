@@ -1,8 +1,23 @@
 # rsprite2 0.2.1.9002
 
-* Maintenance: fixed workflow syntax and enabled package checks on pull requests. Documentation is committed only after successful checks on branch pushes. These changes improve release checks and do not alter statistical results.
-* Ordinary use: fixed distribution plots to retain complete endpoint bars and show exact response frequencies, including multi-item scales, gaps, and constant distributions. Empty search results now produce a clear plotting diagnostic.
-* Rare-input hardening: for manually supplied data, invalid distribution vectors and scalar controls now produce clear errors; density plots reject distributions with fewer than two distinct responses.
+## Fixes affecting ordinary use
+
+* Fixed distribution plots to retain complete endpoint bars and show exact response frequencies, including multi-item scales, gaps, and constant distributions. Empty search results now produce a clear plotting diagnostic.
+* Corrected inferred precision for negative numbers and scientific notation, and infer SD precision from the SD in boundary checks. Rounded zero SDs and multi-item constant samples now pass GRIMMER when compatible. Floating-point tolerance also prevents false rejection at sum-of-squares boundaries on ordinary multi-item scales.
+* GRIMMER now consistently honours its return modes and returns compatible SD candidates for the tested interval. Empty candidate vectors always indicate failure. Added `quiet` controls and clarified that passing this screening test does not prove that a sample exists.
+* Corrected GRIM's nearest reported means, including ties, and avoid enumerating candidates for logical-only GRIM checks.
+
+## Edge cases and input hardening
+
+* For manually supplied data, invalid distribution vectors and scalar controls now produce clear errors; density plots reject distributions with fewer than two distinct responses.
+* Stabilised SD bounds and GRIMMER calculations for scales with unusually large offsets.
+* Validate finite statistics, positive counts, scalar flags, explicit precisions, and ordered integer scale bounds. Undefined boundary ranges consistently return two numeric missing values when requested. Extremely large arithmetic or candidate enumerations now fail explicitly.
+
+## Maintenance
+
+* Fixed workflow syntax and enabled package checks on pull requests. Documentation is committed only after successful checks on branch pushes. These changes improve release checks and do not alter statistical results.
+
+## Earlier development changes
 
 * Changed implementation of `GRIM_test()` to more direct calculation rather than iterative check to increase transparency and efficiency. If requested to return the nearest possible means, the function now also correctly returns two values if there are two equidistant values. (For users wishing to use the original algorithm, it is presently retained as an *unexported* function that can be called with `rsprite2:::GRIM_test_old()`.)
 * Changed implementation of `GRIMMER_test()` to account for the fact that multiple exact means may be compatible with the reported means, if the mean is reported to a lower precision than the standard deviation. The previous version missed some valid SDs in this rare case. Also optimised the implementation of the algorithm to catch special cases explicitly and run a lot faster.
