@@ -2,22 +2,22 @@
 
 ## Fixes affecting ordinary use
 
-* Fixed reconstruction with exact endpoint restrictions, singleton response sets, and fully fixed samples. Restriction names now map to unique lattice responses, including decimal names and multi-item scales.
+* Fixed reconstruction with exact endpoint restrictions, singleton response sets, and fully fixed samples. Restriction names now map to unique lattice responses, including decimal names and multi-item scales. Saved parameter objects remain supported.
 * Reconstruction consistently accepts rounding ties, checks the final candidate and all success invariants, and returns the closest observed SD with matching values on failure. Iterations count SD adjustments, so an initial match reports zero. Restricted downward moves now receive the same gap repair as upward moves.
 * Search stopping rules count every attempt and consecutive duplicate correctly, including the final success. Explicit search seeds preserve the caller's RNG state. `dont_test = TRUE` now skips all statistical prechecks while retaining input validation.
-* Hardened unusual or invalid inputs: rejected missing flags and invalid restriction counts, handled zero requested distributions, made `.equalish()` respect its tolerance, and removed an unused constant.
 * Clarified the singular result's `values` field and the limits of stochastic reconstruction.
 
 * Fixed distribution plots to retain complete endpoint bars and show exact response frequencies, including multi-item scales, gaps, and constant distributions. Empty search results now produce a clear plotting diagnostic.
-* Corrected inferred precision for negative numbers and scientific notation, and infer SD precision from the SD in boundary checks. Rounded zero SDs and multi-item constant samples now pass GRIMMER when compatible. Floating-point tolerance also prevents false rejection at sum-of-squares boundaries on ordinary multi-item scales.
+* Corrected precision inference for negative numbers and scientific notation, including inference from the SD itself in boundary checks. Rounded zero SDs and multi-item constant samples now pass GRIMMER when compatible. Floating-point tolerance also prevents false rejection at sum-of-squares boundaries on ordinary multi-item scales.
 * GRIMMER now consistently honours its return modes and returns compatible SD candidates for the tested interval. Empty candidate vectors always indicate failure. Added `quiet` controls and clarified that passing this screening test does not prove that a sample exists.
-* Corrected GRIM's nearest reported means, including ties, and avoid enumerating candidates for logical-only GRIM checks.
+* Corrected GRIM's nearest reported means, including ties, and avoided enumerating candidates for logical-only GRIM checks.
 
 ## Edge cases and input hardening
 
-* For manually supplied data, invalid distribution vectors and scalar controls now produce clear errors; density plots reject distributions with fewer than two distinct responses.
-* Stabilised SD bounds and GRIMMER calculations for scales with unusually large offsets.
-* Validate finite statistics, positive counts, scalar flags, explicit precisions, and ordered integer scale bounds. Undefined boundary ranges consistently return two numeric missing values when requested. Extremely large arithmetic or candidate enumerations now fail explicitly.
+* Hardened unusual or invalid inputs: rejected missing flags and invalid restriction counts, handled zero requested distributions, made `.equalish()` respect its tolerance, and removed an unused constant.
+* For rarely encountered malformed manual data, invalid distribution vectors and scalar controls now produce clear errors; density plots reject distributions with fewer than two distinct responses.
+* Stabilised SD bounds and GRIMMER calculations for scales with unusually large offsets. Reconstruction also retains numeric restriction targets and compares lattice positions to prevent precision loss on these scales.
+* Tightened validation of finite statistics, positive counts, scalar flags, explicit precisions, and ordered integer scale bounds. Undefined boundary ranges consistently return two numeric missing values when requested. Extremely large arithmetic or candidate enumerations now fail explicitly.
 
 ## Maintenance
 
