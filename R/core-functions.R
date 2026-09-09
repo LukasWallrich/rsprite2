@@ -862,8 +862,9 @@ boundary_test <- function(sd, n_obs, mean, min_val, max_val,
 #'
 #' @details
 #' GRIMMER compatibility is a necessary condition for a sample to exist, not
-#' proof that a sample exists. The integer and parity conditions on sums of
-#' squares can pass even when no sample produces the reported statistics.
+#' proof that a sample exists. The integer, parity, and minimum-variance
+#' conditions on sums of squares can pass even when no sample produces the
+#' reported statistics.
 #' Optional scale bounds add a range check but do not make the test sufficient.
 #' For example, two integer observations on a scale from 0 to 4 cannot have
 #' mean 2 and SD 2.0, although these statistics pass GRIMMER.
@@ -951,6 +952,12 @@ GRIMMER_test <- function(mean, sd, n_obs, m_prec = NULL, sd_prec = NULL,
     tolerance <- max(rSprite.dust, 8 * .Machine$double.eps * max(lower_ss, upper_ss))
     lower <- ceiling(lower_ss - tolerance)
     upper <- floor(upper_ss + tolerance)
+    # For this total, adjacent integer item sums give the smallest possible
+    # sum of squares. This also rules out zero SD for off-lattice means.
+    q <- floor(total / n_obs)
+    k <- total - q * n_obs
+    minimum_ss <- (n_obs - k) * q^2 + k * (q + 1)^2
+    lower <- max(lower, minimum_ss)
     lower <- lower + ((round(total) - lower) %% 2)
     if (lower > upper) next
     # Apply the same SD rounding check in every return mode. At an integer

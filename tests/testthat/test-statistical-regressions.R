@@ -36,6 +36,21 @@ test_that("GRIMMER return modes agree including rounded zero and boundary failur
   expect_true(GRIMMER_test(1.83, .2, 9, n_items = 2, m_prec = 2, sd_prec = 1, quiet = TRUE))
 })
 
+test_that("GRIMMER rejects SDs below each total's lattice minimum", {
+  for (reported_mean in c(-1.5, 1.5, 1e8 + 1.5)) {
+    expect_false(GRIMMER_test(reported_mean, 0, 8, sd_prec = 2, quiet = TRUE))
+    expect_false(GRIMMER_test(reported_mean, 0, 8, sd_prec = 0, quiet = TRUE))
+    # Half-integer constants are available on a two-item lattice.
+    expect_true(GRIMMER_test(reported_mean, 0, 8, n_items = 2,
+                            sd_prec = 2, quiet = TRUE))
+  }
+  expect_false(GRIMMER_test(2.5, 0, 10, quiet = TRUE))
+  expect_false(GRIMMER_test(1.44, .17, 9, quiet = TRUE))
+  expect_false(GRIMMER_test(-1.44, .17, 9, quiet = TRUE))
+  # Rounded zero still includes genuine small positive SDs.
+  expect_true(GRIMMER_test(1.1, 0, 10, m_prec = 1, sd_prec = 0, quiet = TRUE))
+})
+
 test_that("statistical tests reject malformed inputs and preserve undefined range types", {
   for (bad in list(0, -1, NA_real_, Inf, 2.5)) {
     expect_error(GRIM_test(2, bad, quiet = TRUE))

@@ -65,8 +65,9 @@ extended by Aurélien Allard to support multi-item scales.
 }
 \details{
 GRIMMER compatibility is a necessary condition for a sample to exist, not
-proof that a sample exists. The integer and parity conditions on sums of
-squares can pass even when no sample produces the reported statistics.
+proof that a sample exists. The integer, parity, and minimum-variance
+conditions on sums of squares can pass even when no sample produces the
+reported statistics.
 Optional scale bounds add a range check but do not make the test sufficient.
 For example, two integer observations on a scale from 0 to 4 cannot have
 mean 2 and SD 2.0, although these statistics pass GRIMMER.
