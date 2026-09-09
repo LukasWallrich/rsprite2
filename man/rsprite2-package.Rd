@@ -21,6 +21,11 @@ Useful links:
 \author{
 \strong{Maintainer}: Lukas Wallrich \email{lukas.wallrich@gmail.com} (\href{https://orcid.org/0000-0003-2121-5177}{ORCID})
 
+Authors:
+\itemize{
+  \item Lukas Wallrich \email{lukas.wallrich@gmail.com} (\href{https://orcid.org/0000-0003-2121-5177}{ORCID})
+}
+
 Other contributors:
 \itemize{
   \item Aurélien Allard \email{aurelien.ab.allard@gmail.com} [contributor]

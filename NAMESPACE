@@ -9,6 +9,8 @@ export(plot_distributions)
 export(set_parameters)
 import(checkmate)
 importFrom(Rdpack,reprompt)
-importFrom(stats,runif)
-importFrom(stats,sd)
+importFrom(stats,
+  runif,
+  sd
+)
 importFrom(utils,head)
