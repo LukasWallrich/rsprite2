@@ -3,47 +3,60 @@ on:
     branches:
       - main
       - master
+  pull_request:
+  workflow_dispatch:
 
 name: R-CMD-check
+
+permissions:
+  contents: read
 
 jobs:
   document-and-dispatch:
     name: document
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
       - uses: r-lib/actions/setup-r@v2
         with:
           use-public-rspm: true
           r-version: 'release'
       - name: Delete-Namespace
-        run: Rscript -e 'file.remove("NAMESPACE")'          
+        run: Rscript -e 'file.remove("NAMESPACE")'
       - uses: r-lib/actions/setup-pandoc@v2
-      - name: system dependencies
-        run: sudo apt-get install libcurl4-openssl-dev libnode-dev
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::rcmdcheck, any::roxygen2
+          extra-packages: any::rcmdcheck, any::roxygen2, any::cffr, any::covr
           needs: check
 
       - name: Document
-        run: Rscript -e 'roxygen2::roxygenise()'
-        
-      - name: commit
+        run: |
+          roxygen2::roxygenise()
+          if (file.exists("CITATION.cff")) cffr::cff_write()
+        shell: Rscript {0}
+
+      - uses: r-lib/actions/check-r-package@v2
+
+      - name: Test coverage
+        if: github.event_name == 'push'
+        run: |
+          covr::codecov()
+        shell: Rscript {0}
+
+      - name: Commit generated documentation
+        if: github.event_name == 'push'
         run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
-          git add -f man/\* NAMESPACE
-          git commit -m 'Documentation' || echo "No changes to commit"
-          git push origin || echo "No changes to commit"
-    
-        
-      - uses: r-lib/actions/check-r-package@v2
-         
-      - name: Test coverage
-        run: |
-          install.packages(c("covr"))
-          covr::codecov()
-        shell: Rscript {0}
+          git add -A -f -- man NAMESPACE
+          if git ls-files --error-unmatch CITATION.cff >/dev/null 2>&1; then
+            git add CITATION.cff
+          fi
+          if ! git diff --cached --quiet; then
+            git commit -m 'Documentation'
+            git push origin HEAD:"${GITHUB_REF_NAME}"
+          fi
