@@ -51,16 +51,21 @@
 <h2 class="page-header" data-toc-text="0.2.1.9002" id="rsprite2-0219002">rsprite2 0.2.1.9002<a class="anchor" aria-label="anchor" href="#rsprite2-0219002"></a></h2>
 <div class="section level3">
 <h3 id="fixes-affecting-ordinary-use-0-2-1-9002">Fixes affecting ordinary use<a class="anchor" aria-label="anchor" href="#fixes-affecting-ordinary-use-0-2-1-9002"></a></h3>
-<ul><li>Fixed distribution plots to retain complete endpoint bars and show exact response frequencies, including multi-item scales, gaps, and constant distributions. Empty search results now produce a clear plotting diagnostic.</li>
-<li>Corrected inferred precision for negative numbers and scientific notation, and infer SD precision from the SD in boundary checks. Rounded zero SDs and multi-item constant samples now pass GRIMMER when compatible. Floating-point tolerance also prevents false rejection at sum-of-squares boundaries on ordinary multi-item scales.</li>
-<li>GRIMMER now consistently honours its return modes and returns compatible SD candidates for the tested interval. Empty candidate vectors always indicate failure. Added <code>quiet</code> controls and clarified that passing this screening test does not prove that a sample exists.</li>
-<li>Corrected GRIM’s nearest reported means, including ties, and avoid enumerating candidates for logical-only GRIM checks.</li>
+<ul><li><p>Fixed reconstruction with exact endpoint restrictions, singleton response sets, and fully fixed samples. Restriction names now map to unique lattice responses, including decimal names and multi-item scales. Saved parameter objects remain supported.</p></li>
+<li><p>Reconstruction consistently accepts rounding ties, checks the final candidate and all success invariants, and returns the closest observed SD with matching values on failure. Iterations count SD adjustments, so an initial match reports zero. Restricted downward moves now receive the same gap repair as upward moves.</p></li>
+<li><p>Search stopping rules count every attempt and consecutive duplicate correctly, including the final success. Explicit search seeds preserve the caller’s RNG state. <code>dont_test = TRUE</code> now skips all statistical prechecks while retaining input validation.</p></li>
+<li><p>Clarified the singular result’s <code>values</code> field and the limits of stochastic reconstruction.</p></li>
+<li><p>Fixed distribution plots to retain complete endpoint bars and show exact response frequencies, including multi-item scales, gaps, and constant distributions. Empty search results now produce a clear plotting diagnostic.</p></li>
+<li><p>Corrected precision inference for negative numbers and scientific notation, including inference from the SD itself in boundary checks. Rounded zero SDs and multi-item constant samples now pass GRIMMER when compatible. Floating-point tolerance also prevents false rejection at sum-of-squares boundaries on ordinary multi-item scales.</p></li>
+<li><p>GRIMMER now consistently honours its return modes and returns compatible SD candidates for the tested interval. Empty candidate vectors always indicate failure. Each compatible mean is also checked against the minimum variance on the response lattice. Added <code>quiet</code> controls and clarified that passing this screening test does not prove that a sample exists.</p></li>
+<li><p>Corrected GRIM’s nearest reported means, including ties, and avoided enumerating candidates for logical-only GRIM checks.</p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="edge-cases-and-input-hardening-0-2-1-9002">Edge cases and input hardening<a class="anchor" aria-label="anchor" href="#edge-cases-and-input-hardening-0-2-1-9002"></a></h3>
-<ul><li>For manually supplied data, invalid distribution vectors and scalar controls now produce clear errors; density plots reject distributions with fewer than two distinct responses.</li>
-<li>Stabilised SD bounds and GRIMMER calculations for scales with unusually large offsets.</li>
-<li>Validate finite statistics, positive counts, scalar flags, explicit precisions, and ordered integer scale bounds. Undefined boundary ranges consistently return two numeric missing values when requested. Extremely large arithmetic or candidate enumerations now fail explicitly.</li>
+<ul><li>Hardened unusual or invalid inputs: rejected missing flags and invalid restriction counts, handled zero requested distributions, made <code>.equalish()</code> respect its tolerance, and removed an unused constant.</li>
+<li>For rarely encountered malformed manual data, invalid distribution vectors and scalar controls now produce clear errors; density plots reject distributions with fewer than two distinct responses.</li>
+<li>Stabilised SD bounds and GRIMMER calculations for scales with unusually large offsets. Reconstruction also retains numeric restriction targets and compares lattice positions to prevent precision loss on these scales.</li>
+<li>Tightened validation of finite statistics, positive counts, scalar flags, explicit precisions, and ordered integer scale bounds. Undefined boundary ranges consistently return two numeric missing values when requested. Extremely large arithmetic or candidate enumerations now fail explicitly.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="maintenance-0-2-1-9002">Maintenance<a class="anchor" aria-label="anchor" href="#maintenance-0-2-1-9002"></a></h3>
