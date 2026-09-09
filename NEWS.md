@@ -2,6 +2,12 @@
 
 ## Fixes affecting ordinary use
 
+* Fixed reconstruction with exact endpoint restrictions, singleton response sets, and fully fixed samples. Restriction names now map to unique lattice responses, including decimal names and multi-item scales.
+* Reconstruction consistently accepts rounding ties, checks the final candidate and all success invariants, and returns the closest observed SD with matching values on failure. Restricted downward moves now receive the same gap repair as upward moves.
+* Search stopping rules count every attempt and consecutive duplicate correctly, including the final success. Explicit search seeds preserve the caller's RNG state. `dont_test = TRUE` now skips all statistical prechecks while retaining input validation.
+* Hardened unusual or invalid inputs: rejected missing flags and invalid restriction counts, handled zero requested distributions, made `.equalish()` respect its tolerance, and removed an unused constant.
+* Clarified the singular result's `values` field and the limits of stochastic reconstruction.
+
 * Fixed distribution plots to retain complete endpoint bars and show exact response frequencies, including multi-item scales, gaps, and constant distributions. Empty search results now produce a clear plotting diagnostic.
 * Corrected inferred precision for negative numbers and scientific notation, and infer SD precision from the SD in boundary checks. Rounded zero SDs and multi-item constant samples now pass GRIMMER when compatible. Floating-point tolerance also prevents false rejection at sum-of-squares boundaries on ordinary multi-item scales.
 * GRIMMER now consistently honours its return modes and returns compatible SD candidates for the tested interval. Empty candidate vectors always indicate failure. Added `quiet` controls and clarified that passing this screening test does not prove that a sample exists.

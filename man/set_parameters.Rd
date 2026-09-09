@@ -23,19 +23,20 @@ set_parameters(
 
 \item{sd}{The standard deviation of the distribution}
 
-\item{n_obs}{The number of observations (sample size)}
+\item{n_obs}{The number of observations (sample size), an integer of at least two for reconstruction.}
 
 \item{min_val}{The minimum value}
 
 \item{max_val}{The maximum value}
 
-\item{m_prec}{The precision of the mean, as number of digits after the decimal point.
-If not provided, taken based on the significant digits of \code{mean} - so only needed if reported mean ends in 0}
+\item{m_prec}{The precision of the reported mean, as a nonnegative integer number of
+decimal places (at most 308), consistent with the supplied value. Inferred from the
+numeric value if omitted; specify it explicitly when the reported mean ends in zero.}
 
-\item{sd_prec}{The precision of the standard deviation, again only needed if
-reported standard deviation ends in 0.}
+\item{sd_prec}{The precision of the reported standard deviation, with the same
+requirements as \code{m_prec}. Specify it explicitly to preserve trailing zeroes.}
 
-\item{n_items}{Number of items in scale, if distribution represents scale averages.
+\item{n_items}{Positive integer number of items in scale, if distribution represents scale averages.
 Defaults to 1, which represents any single-item measure.}
 
 \item{restrictions_exact}{Restrictions on the exact frequency of specific responses, see Details}
@@ -44,7 +45,8 @@ Defaults to 1, which represents any single-item measure.}
 
 \item{dont_test}{By default, this function tests whether the mean is possible, given the sample size (GRIM-test) and whether
 the standard deviation is possible, given mean and sample size (GRIMMER test), and fails otherwise. If you want to override this,
-and run SPRITE anyway, you can set this to TRUE.}
+and run SPRITE anyway, you can set this to TRUE. This skips GRIM, GRIMMER, and SD-bound
+checks; input validation and restriction checks still apply.}
 }
 \value{
 A named list of parameters, pre-processed for further rsprite2 functions.
@@ -63,8 +65,10 @@ there should be no 3s and five 4s in the distribution, you would pass
 one 1 and one 7, you would pass \code{restrictions_minimum = list("1" = 1, "7" = 1)}. If you just want to
 specify that the minimum and maximum values appear at least once (for instance when they are the
 reported rather than possible range), you can use the shortcut \code{restrictions_minimum = "range"}. Finally,
-if you work with multi-item scales that result in decimal responses, round those names to two decimal points, e.g.,
-when \code{n_items = 3} you could specify \code{list("1.67" = 0)}.
+for multi-item scales, name the response as precisely as needed to identify it. Exact lattice
+matches take priority; rounded names are also accepted if they identify a unique response
+(e.g., \code{list("1.67" = 0)} when \code{n_items = 3}). Ambiguous shorthand and duplicate restrictions
+are rejected. Counts must be nonnegative integers, with their sum no greater than \code{n_obs}.
 }
 \examples{
 

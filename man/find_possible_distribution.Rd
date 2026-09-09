@@ -9,14 +9,15 @@ find_possible_distribution(parameters, seed = NULL, values_only = FALSE)
 \arguments{
 \item{parameters}{List of parameters, see \code{\link{set_parameters}}}
 
-\item{seed}{An integer to use as the seed for random number generation. Set this in scripts to ensure reproducibility.}
+\item{seed}{An integer to use as the seed for random number generation. Set this in scripts to ensure reproducibility.
+Explicit seeds leave the caller's random number generator state unchanged.}
 
 \item{values_only}{Should only values or a more informative list be returned. See Value section.}
 }
 \value{
 Unless \code{values_only = TRUE}, a list with:
 \item{outcome}{success or failure - character}
-\item{distribution}{The distribution that was found (if success) / that had the closest variance (if failure) - numeric}
+\item{values}{The distribution that was found (if success) / whose SD came closest to the target during the search (if failure) - numeric}
 \item{mean}{The exact mean of the distribution - numeric}
 \item{sd}{The SD of the distribution that was found (success) / that came closest (failure) - numeric}
 \item{iterations}{The number of iterations required to achieve the specified SD - numeric}
@@ -26,6 +27,11 @@ If \code{values_only = TRUE}, then the distribution is returned if one was found
 This function aims to find a possible distribution that would give rise to
 the observed sample parameters. For that, you need to pass a list of parameters,
 best created with \code{\link{set_parameters}}
+}
+\details{
+A successful search supplies one compatible reconstruction. Search failure does not prove
+impossibility, and the frequencies with which reconstructions are found do not estimate
+probabilities for the original data. Rounding ties are accepted in either direction.
 }
 \examples{
 sprite_parameters <- set_parameters(mean = 2.2, sd = 1.3, n_obs = 20,
