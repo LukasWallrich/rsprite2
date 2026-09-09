@@ -50,6 +50,12 @@ This function tests whether a given mean (with a specific precision) can
 result from a sample of a given size based on integer responses to one or more
 items. The test is based on Brown & Heathers (2017).
 }
+\details{
+Logical-only requests compare interval endpoints without enumerating
+possible means. Value and list requests stop if more than one million
+candidates would need enumeration. Inputs beyond reliable integer
+arithmetic also stop with an informative error.
+}
 \examples{
 # A sample of 28 integers cannot result in a mean of 5.19.
 GRIM_test(mean = 5.19, n_obs = 28)

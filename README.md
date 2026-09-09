@@ -36,6 +36,8 @@ checks whether a reported standard deviation is consistent with a
 reported mean and sample size. They can help catch impossible
 distributions and reporting errors without running any simulations.
 
+Passing GRIMMER is necessary but does not prove that a sample with the reported statistics exists, even when scale bounds are supplied. A successfully reconstructed sample whose statistics and restrictions have been verified provides a witness of feasibility. Conversely, a failed SPRITE search does not prove impossibility, and the frequency with which SPRITE finds a distribution does not estimate the probability that it was the original sample.
+
 ## Installation
 
 rsprite2 can be installed from CRAN with:

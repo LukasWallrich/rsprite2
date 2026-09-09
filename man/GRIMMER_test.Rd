@@ -14,7 +14,8 @@ GRIMMER_test(
   min_val = NULL,
   max_val = NULL,
   return_values = FALSE,
-  return_list = FALSE
+  return_list = FALSE,
+  quiet = FALSE
 )
 }
 \arguments{
@@ -37,22 +38,23 @@ Defaults to 1, which represents any single-item measure.}
 
 \item{max_val}{(Optional) Scale maximum.}
 
-\item{return_values}{A logical value. \emph{Ignored if \code{return_list = TRUE}}.
-If \code{FALSE} (the default), the function returns a simple \code{TRUE} or \code{FALSE}. If \code{TRUE}, it returns a numeric
-vector of all possible unrounded standard deviations that are consistent - unless the precision/sample size ratio
-allows for all standard deviations within the possible range to be GRIMMER-consistent. In that case, a message
-is shown and an empty numeric vector is returned.}
+\item{return_values}{A logical value, ignored if \code{return_list = TRUE}.
+If \code{TRUE}, return the unrounded SDs within the tested rounding interval
+that satisfy the GRIMMER arithmetic conditions. Otherwise return a logical verdict.}
 
-\item{return_list}{A logical value. If \code{FALSE} (the default), the function's
-return type is determined by \code{return_values}. If \code{TRUE}, the function
-instead returns a list containing a logical \code{passed} flag
-and a numeric \code{values} vector.}
+\item{return_list}{If \code{TRUE}, return a list with logical \code{passed} and numeric
+\code{values} components, irrespective of \code{return_values}.}
+
+\item{quiet}{Suppress warnings.}
 }
 \value{
-The return type depends on the arguments. By default, a logical scalar
-(\code{TRUE} or \code{FALSE}). If \code{return_values = TRUE}, a numeric vector is returned.
-If \code{return_list = TRUE}, a list is returned. An inconsistent result will yield
-\code{FALSE}, an empty numeric vector, or a list with \code{passed = FALSE}.
+A logical scalar by default. With \code{return_values = TRUE}, a numeric
+vector of compatible unrounded SDs; an empty vector always means failure.
+With \code{return_list = TRUE}, a list with \code{passed} and \code{values} components.
+Candidate values satisfy the screening conditions and need not correspond
+to actual samples. Requests requiring more than one million candidates
+to be enumerated, or inputs beyond reliable integer arithmetic, stop
+with an informative error.
 }
 \description{
 This function tests whether a given standard deviation (with a specific precision)
@@ -60,6 +62,18 @@ can result from a sample of a given size based on integer responses to one or mo
 items. The test was first proposed by \href{https://peerj.com/preprints/2400/}{Anaya (2016)}; here, the algorithm
 developed by \href{https://aurelienallard.netlify.app/post/anaytic-grimmer-possibility-standard-deviations/}{Allard (2018)} is used,
 extended by Aurélien Allard to support multi-item scales.
+}
+\details{
+GRIMMER compatibility is a necessary condition for a sample to exist, not
+proof that a sample exists. The integer and parity conditions on sums of
+squares can pass even when no sample produces the reported statistics.
+Optional scale bounds add a range check but do not make the test sufficient.
+For example, two integer observations on a scale from 0 to 4 cannot have
+mean 2 and SD 2.0, although these statistics pass GRIMMER.
+
+Both endpoints of each reporting interval are accepted to accommodate
+different conventions for rounding ties. A reported SD of zero therefore
+also includes small positive SDs that round to zero.
 }
 \examples{
 # A sample of 18 integers with mean 3.44 cannot have an SD of 2.47.
