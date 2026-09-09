@@ -9,7 +9,7 @@
 
 * Fixed distribution plots to retain complete endpoint bars and show exact response frequencies, including multi-item scales, gaps, and constant distributions. Empty search results now produce a clear plotting diagnostic.
 * Corrected precision inference for negative numbers and scientific notation, including inference from the SD itself in boundary checks. Rounded zero SDs and multi-item constant samples now pass GRIMMER when compatible. Floating-point tolerance also prevents false rejection at sum-of-squares boundaries on ordinary multi-item scales.
-* GRIMMER now consistently honours its return modes and returns compatible SD candidates for the tested interval. Empty candidate vectors always indicate failure. Added `quiet` controls and clarified that passing this screening test does not prove that a sample exists.
+* GRIMMER now consistently honours its return modes and returns compatible SD candidates for the tested interval. Empty candidate vectors always indicate failure. Each compatible mean is also checked against the minimum variance on the response lattice. Added `quiet` controls and clarified that passing this screening test does not prove that a sample exists.
 * Corrected GRIM's nearest reported means, including ties, and avoided enumerating candidates for logical-only GRIM checks.
 
 ## Edge cases and input hardening
