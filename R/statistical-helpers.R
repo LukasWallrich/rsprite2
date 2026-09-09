@@ -30,7 +30,7 @@
 
 .integer_sequence <- function(lower, upper, by = 1) {
   if (lower > upper) return(numeric(0))
-  if ((upper - lower) / by > 1e6) {
+  if (floor((upper - lower) / by) + 1 > 1e6) {
     stop("More than one million candidates would need enumeration; increase the reported precision or request a logical GRIM result.", call. = FALSE)
   }
   seq(lower, upper, by = by)
